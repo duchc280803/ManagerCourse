@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .table {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .table-bordered {
+      border: 1px solid #dee2e6;
+    }
+
+    .table-bordered td, .table-bordered th {
+      border: 1px solid #dee2e6;
+      padding: .5rem;
+      text-align: center;
+    }
+
+    .table-bordered thead th {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Lịch Tháng {{ selectedMonth }}, 2024</h3>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="thang">Chọn tháng:</label>
+            <select id="thang" class="form-control" v-model="selectedMonth" @change="hienThiLich">
+              <option v-for="(month, index) in 12" :value="index + 1" :key="index">{{ 'Tháng ' + (index + 1) }}</option>
+            </select>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Thứ Hai</th>
+                <th>Thứ Ba</th>
+                <th>Thứ Tư</th>
+                <th>Thứ Năm</th>
+                <th>Thứ Sáu</th>
+                <th>Thứ Bảy</th>
+                <th>Chủ Nhật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(week, index) in weeks" :key="index">
+                <td v-for="(day, idx) in week" :key="idx" :class="{ 'text-danger': idx === 6 }">{{ day }}</td>
+              </tr>
+              <div></div>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue@next"></script>
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          selectedMonth: 3, // Tháng mặc định là tháng 3
+          weeks: [] // Mảng chứa các tuần trong tháng
+        }
+      },
+      mounted() {
+        this.hienThiLich(); // Hiển thị lịch cho tháng được chọn ban đầu
+      },
+      methods: {
+        hienThiLich() {
+          this.weeks = []; // Xóa dữ liệu cũ
+          const soNgay = new Date(2024, this.selectedMonth, 0).getDate(); // Lấy số ngày trong tháng
+
+          let week = []; // Mảng chứa các ngày trong một tuần
+          for (let i = 1; i <= soNgay; i++) {
+            const ngay = i % 7; // Tính toán ngày trong tuần
+            week.push(i); // Thêm ngày vào mảng tuần
+
+            // Nếu đã duyệt hết 7 ngày hoặc đã duyệt hết số ngày trong tháng
+            if (ngay === 0 || i === soNgay) {
+              this.weeks.push(week); // Thêm mảng tuần vào mảng các tuần
+              week = []; // Reset mảng tuần
+            }
+          }
+        }
+      }
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

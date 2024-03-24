@@ -1,0 +1,24 @@
+package com.example.managercourse.service;
+
+import com.example.managercourse.dto.request.ScheduleRequest;
+import com.example.managercourse.dto.request.ScheduleUpdateRequest;
+import com.example.managercourse.dto.response.MessageResponse;
+import com.example.managercourse.dto.response.ScheduleDetailResponse;
+import com.example.managercourse.dto.response.ScheduleResponse;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface ScheduleService {
+
+    List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id, String subjectName);
+
+    MessageResponse createSchedule(ScheduleRequest scheduleRequest);
+
+    ScheduleDetailResponse detail(Integer id);
+
+    MessageResponse updateSchedule(Integer id, ScheduleUpdateRequest scheduleUpdateRequest);
+
+    List<ScheduleResponse> findAllScheduleByCourse(Integer pageNumber, Integer pageSize, Integer id, String username);
+
+}
