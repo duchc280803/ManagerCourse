@@ -50,10 +50,15 @@ public class ScheduleServiceImpl implements ScheduleService {
     private SubjectRepository subjectRepository;
 
     @Override
-    public List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id, String subjectName) {
+    public List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id,  Integer idSubject, String username) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ScheduleResponse> scheduleResponses = scheduleRepository.findAllSchedule(id, subjectName, pageable);
-        return scheduleResponses.getContent();
+        if ("admin".equals(username)) {
+            Page<ScheduleResponse> findAllScheduleForAdmin = scheduleRepository.findAllScheduleForAdmin(id, idSubject, pageable);
+            return findAllScheduleForAdmin.getContent();
+        } else {
+            Page<ScheduleResponse> scheduleResponses = scheduleRepository.findAllSchedule(id, idSubject, pageable, username);
+            return scheduleResponses.getContent();
+        }
     }
 
     @Override
@@ -66,11 +71,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         ClassRoom classRoom = classRoomRepository.findById(scheduleRequest.getIdClassRoom())
                 .orElseThrow(() -> new EntityNotFoundException("ClassRoom not found"));
 
-        LocalDate startDate = subject.getStudyTimeStart();
-        LocalDate endDate = subject.getStudyTimeEnd();
         int selectedValue = scheduleRequest.getDay();
 
-        List<LocalDate> studyDays = getStudyDays(selectedValue, startDate, endDate);
+        List<LocalDate> studyDays = getStudyDays(selectedValue, subject.getNumberOfSessions());
         List<Schedule> schedules = new ArrayList<>();
         for (LocalDate localDate: studyDays) {
             Schedule lessonSchedule = createScheduleForDay(aClass, subject, classRoom, scheduleRequest);
@@ -113,9 +116,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         return Schedule.builder().aClass(aClass).subject(subject).classRoom(classRoom).day(scheduleRequest.getDay()).endDate(scheduleRequest.getTimeEnd()).startDate(scheduleRequest.getTimeStart()).status(1).build();
     }
 
-    public static List<LocalDate> getStudyDays(int selectedValue, LocalDate startDate, LocalDate endDate) {
+    public static List<LocalDate> getStudyDays(int selectedValue, int soBuoi) {
         List<LocalDate> studyDays = new ArrayList<>();
-        LocalDate currentDate = startDate;
+        LocalDate currentDate = LocalDate.now();
 
         // Nếu ngày bắt đầu là một ngày học được chọn, chuyển sang ngày học tiếp theo
         if (selectedValue == 1 && (currentDate.getDayOfWeek() == DayOfWeek.MONDAY || currentDate.getDayOfWeek() == DayOfWeek.WEDNESDAY || currentDate.getDayOfWeek() == DayOfWeek.FRIDAY)) {
@@ -124,8 +127,11 @@ public class ScheduleServiceImpl implements ScheduleService {
             currentDate = currentDate.plusDays(1);
         }
 
-        // Kiểm tra từng ngày từ ngày bắt đầu đến ngày kết thúc
-        while (!currentDate.isAfter(endDate)) {
+        // Đếm số buổi học đã được thêm vào danh sách
+        int addedSessions = 0;
+
+        // Kiểm tra từng ngày từ ngày bắt đầu đến khi đã thêm đủ số buổi học
+        while (addedSessions < soBuoi) {
             // Kiểm tra ngày thứ và selectedValue
             DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
             boolean shouldAdd = false;
@@ -137,6 +143,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
             if (shouldAdd) {
                 studyDays.add(currentDate);
+                addedSessions++; // Tăng số buổi học đã được thêm vào danh sách
             }
 
             // Di chuyển tới ngày tiếp theo
@@ -145,6 +152,5 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return studyDays;
     }
-
 
 }

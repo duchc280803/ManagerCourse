@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ScheduleService {
 
-    List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id, String subjectName);
+    List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id,  Integer idSubject, String username);
 
     MessageResponse createSchedule(ScheduleRequest scheduleRequest);
 

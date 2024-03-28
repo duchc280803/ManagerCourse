@@ -245,7 +245,7 @@ console.log(auth);
                           >
                         </li>
                       </RouterLink>
-                      <RouterLink to="/all-course">
+                      <!-- <RouterLink to="/all-course">
                         <li class="sidebar-item" style="margin-left: 37px">
                           <a
                             class="sidebar-link"
@@ -254,7 +254,7 @@ console.log(auth);
                             >Tất cả khóa học</a
                           >
                         </li>
-                      </RouterLink>
+                      </RouterLink> -->
                       <RouterLink to="/schedule-of-student">
                         <li class="sidebar-item" style="margin-left: 37px">
                           <a
@@ -291,7 +291,7 @@ console.log(auth);
                           >
                         </li>
                       </RouterLink>
-                      <RouterLink to="/point-sum">
+                      <!-- <RouterLink to="/point-sum">
                         <li class="sidebar-item" style="margin-left: 37px">
                           <a
                             class="sidebar-link"
@@ -300,7 +300,7 @@ console.log(auth);
                             >Điểm tổng môn</a
                           >
                         </li>
-                      </RouterLink>
+                      </RouterLink> -->
                     </ul>
                     <a
                       v-show="role === 'TEACHER'"
@@ -327,7 +327,7 @@ console.log(auth);
                           >
                         </li>
                       </RouterLink>
-                      <RouterLink to="/schedule-of-teacher">
+                      <RouterLink to="/schedule">
                         <li class="sidebar-item" style="margin-left: 37px">
                           <a
                             class="sidebar-link"
@@ -399,23 +399,6 @@ console.log(auth);
                         </a>
                       </li>
                     </RouterLink>
-                    <RouterLink to="/point" v-show="role === 'ADMIN'">
-                      <li class="sidebar-item">
-                        <a
-                          class="sidebar-link"
-                          href="#/order-counter"
-                          aria-expanded="false">
-                          <span>
-                            <img
-                              src="../assets/img/hand-gesture.png"
-                              width="180"
-                              alt=""
-                              style="width: 21px; height: 21px" />
-                          </span>
-                          <span class="hide-menu">Quản lý đầu điểm</span>
-                        </a>
-                      </li>
-                    </RouterLink>
                     <RouterLink to="/schedule" v-show="role === 'ADMIN'">
                       <li class="sidebar-item">
                         <a
@@ -447,6 +430,23 @@ console.log(auth);
                               style="width: 21px; height: 21px" />
                           </span>
                           <span class="hide-menu">Quản lý phòng học</span>
+                        </a>
+                      </li>
+                    </RouterLink>
+                    <RouterLink to="/send-mail" v-show="role === 'ADMIN'">
+                      <li class="sidebar-item">
+                        <a
+                          class="sidebar-link"
+                          href="#/order-counter"
+                          aria-expanded="false">
+                          <span>
+                            <img
+                              src="../assets/img/mail.png"
+                              width="180"
+                              alt=""
+                              style="width: 21px; height: 21px" />
+                          </span>
+                          <span class="hide-menu">Send mail</span>
                         </a>
                       </li>
                     </RouterLink>

@@ -11,6 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserInformationResponse {
 
+    private Integer id;
+
     private String fullName;
 
     private Boolean gender;

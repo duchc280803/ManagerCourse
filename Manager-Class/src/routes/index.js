@@ -21,6 +21,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Register from "@/pages/Register.vue";
 import ScheduleOfTeacher from "@/pages/ScheduleOfTeacher.vue";
 import MarkPoint from "@/pages/MarkPoint.vue";
+import Send_mail from "@/pages/Send_mail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -136,6 +137,11 @@ const router = createRouter({
       path: "/mark-point",
       name: "MarkPoint",
       component: MarkPoint
+    },
+    {
+      path: "/send-mail",
+      name: "Send_mail",
+      component: Send_mail
     },
   ],
 });

@@ -25,10 +25,11 @@ public interface SubjectService {
 
     List<SubjectResponse> getListSubjectByCourse(String courseName);
 
-    List<SubjectResponse> getListSubjectByClass(Integer id, Integer pageNumber, Integer pageSize);
+    List<SubjectResponse> getListSubjectByClass(Integer id);
 
     List<SubjectResponse> getListSubjectName(Integer id);
 
     List<SubjectResponse> getListSubjectAddCourse(Integer id);
 
+    List<SubjectResponse> getListSubjectForClass_Subject_Schedule(Integer idClass);
 }

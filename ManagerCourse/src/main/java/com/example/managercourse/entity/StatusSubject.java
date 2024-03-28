@@ -1,28 +1,25 @@
 package com.example.managercourse.entity;
 
+import com.example.managercourse.enums.SubjectEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
-@Table(name = "point_detail")
-public class PointDetail {
+@Table(name = "status_subject")
+public class StatusSubject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private SubjectEnum subjectEnum;
+
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
-
-    @ManyToOne
-    @JoinColumn(name = "study_point_id")
-    private StudyPoint studyPoint;
 }

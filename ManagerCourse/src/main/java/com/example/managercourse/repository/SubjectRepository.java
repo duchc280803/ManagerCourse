@@ -14,35 +14,35 @@ import java.util.List;
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
-    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions, s.classify) " +
             "FROM Subject s ORDER BY s.id DESC ")
     Page<SubjectResponse> getListSubjectName(Pageable pageable);
 
-    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions , s.classify) " +
             "FROM Subject s " +
             "JOIN s.subjectDetailList sd " +
             "JOIN sd.course cs WHERE cs.id = :id")
     Page<SubjectResponse> getListSubjectByCourse(Pageable pageable, @Param("id") Integer id);
 
-    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions , s.classify) " +
             "FROM Subject s " +
             "WHERE s.subjectName LIKE %:subjectName%")
     Page<SubjectResponse> searchListSubject(Pageable pageable, @Param("subjectName") String subjectName);
 
-    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode , s.numberOfSessions, s.classify) " +
             "FROM Course cs " +
             "JOIN cs.subjectDetailList sd " +
             "JOIN sd.subject s " +
             "WHERE cs.courseName = :courseName")
     List<SubjectResponse> getListSubjectByCourse(@Param("courseName") String courseName);
 
-    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions, s.classify) " +
             "FROM Class cl " +
             "JOIN cl.course cs " +
             "JOIN cs.subjectDetailList sd " +
             "JOIN sd.subject s " +
             "WHERE cl.id = :id")
-    Page<SubjectResponse> getListSubjectByClass(@Param("id") Integer id, Pageable pageable);
+    List<SubjectResponse> getListSubjectByClass(@Param("id") Integer id);
 
     @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectName) " +
             "FROM Class cl " +
@@ -56,4 +56,13 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             "FROM Subject s WHERE NOT EXISTS " +
             "(SELECT 1 FROM Subject s2 JOIN s2.subjectDetailList sd JOIN sd.course cs WHERE cs.id = :id AND s.id = s2.id)")
     List<SubjectResponse> getListSubjectAddCourse(@Param("id") Integer id);
+
+    @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions, s.classify) " +
+            "FROM Class cl " +
+            "JOIN cl.course cs " +
+            "JOIN cs.subjectDetailList sd " +
+            "JOIN sd.subject s " +
+            "WHERE cl.id = :id")
+    List<SubjectResponse> getListSubjectByClass1(@Param("id") Integer id);
+
 }

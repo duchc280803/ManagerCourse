@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -59,6 +59,14 @@ const previousPage = function () {
 };
 watch(selectedClassName, () => {
   fetchScheduleData();
+});
+
+const futureScheduleList = computed(() => {
+  const currentDate = new Date();
+  return listScheduleByCourse.value.filter((s) => {
+    // Chỉ hiển thị các mục với ngày sau ngày hiện tại
+    return new Date(s.dateLean) > currentDate;
+  });
 });
 </script>
 <template>
@@ -140,7 +148,7 @@ watch(selectedClassName, () => {
           <tbody>
             <tr
               style="text-align: center"
-              v-for="(sc, index) in listScheduleByCourse">
+              v-for="(sc, index) in futureScheduleList">
               <td>{{ index + 1 + pageNumber * pageSize }}</td>
               <td>{{ sc.subjectName }}</td>
               <td>{{ sc.classRoomName }}</td>

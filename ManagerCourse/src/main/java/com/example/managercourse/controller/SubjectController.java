@@ -69,11 +69,9 @@ public class SubjectController {
 
     @GetMapping("subject-by-class")
     public ResponseEntity<List<SubjectResponse>> getListSubjectByClass(
-            @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "6") Integer pageSize,
             @RequestParam(name = "id") Integer id
     ) {
-        return new ResponseEntity<>(subjectService.getListSubjectByClass(id, pageNumber, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(subjectService.getListSubjectByClass(id), HttpStatus.OK);
     }
 
     @GetMapping("subject-name")
@@ -99,5 +97,10 @@ public class SubjectController {
         return new ResponseEntity<>(subjectService.getListSubjectAddCourse(id), HttpStatus.OK);
     }
 
-
+    @GetMapping("subject-by-class-schedule")
+    public ResponseEntity<List<SubjectResponse>> getListSubjectForClass_Subject_Schedule(
+            @RequestParam(name = "id") Integer id
+    ) {
+        return new ResponseEntity<>(subjectService.getListSubjectForClass_Subject_Schedule(id), HttpStatus.OK);
+    }
 }

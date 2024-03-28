@@ -82,4 +82,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Integer countUserByRole_Role(String role);
 
     Optional<User> findByEmail(String email);
+
 }

@@ -1,16 +1,14 @@
 package com.example.managercourse.controller;
 
 import com.example.managercourse.dto.request.TeacherRequest;
-import com.example.managercourse.dto.response.MessageResponse;
-import com.example.managercourse.dto.response.TeacherResponse;
-import com.example.managercourse.dto.response.TeacherSearchResponse;
-import com.example.managercourse.dto.response.UpdateTeacherResponse;
+import com.example.managercourse.dto.response.*;
 import com.example.managercourse.service.impl.TeacherServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController

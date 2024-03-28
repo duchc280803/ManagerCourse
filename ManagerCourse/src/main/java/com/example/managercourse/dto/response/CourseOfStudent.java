@@ -23,9 +23,5 @@ public class CourseOfStudent {
 
     private Integer learningMode;
 
-    private LocalDate startTime;
-
-    private LocalDate endTime;
-
     private Integer status;
 }

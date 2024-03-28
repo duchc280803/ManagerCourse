@@ -1,9 +1,56 @@
+<script setup>
+import { ref, watch } from "vue";
+import axios from "axios";
+const token = window.localStorage.getItem("token");
+
+const listClassRole = ref([])
+const listStudent = ref([]);
+
+const selectedClassName = ref("")
+
+const fetchStudentData = async () => {
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/class/select-student-of-teacher?className=${selectedClassName.value.className}`
+    );
+    listStudent.value = response.data;
+  } catch (error) {
+    console.error("Error fetching class data:", error);
+  }
+};
+
+const fetchClassDataForRole = async () => {
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+  try {
+    const response = await axios.get(
+      "http://localhost:8080/api/v1/class/findAllClassName",
+      config
+    );
+    listClassRole.value = response.data;
+  } catch (error) {
+    console.error("Error fetching class data:", error);
+  }
+};
+fetchClassDataForRole();
+
+watch(selectedClassName, () => {
+  fetchStudentData();
+})
+</script>
 <template>
   <div
     class="card"
     style="
       width: 1192px;
-      height: 585px;
       margin-left: 30px;
       border-radius: 10px;
       margin-bottom: 30px;
@@ -14,6 +61,31 @@
       </div>
     </div>
     <div class="card-body">
+      <div class="row search_table">
+        <div class="col-4">
+          <div class="input-group-prepend position-relative">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="selectedClassName">
+              <option value="" disabled>Chọn lớp</option>
+              <option
+                :value="cl"
+                :key="index"
+                v-for="(cl, index) in listClassRole">
+                {{ cl.className }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="input-group-prepend position-relative">
+          </div>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-2" v-show="role === 'ADMIN'">
+        </div>
+      </div>
       <section class="section-table">
         <table>
           <thead>
@@ -25,39 +97,24 @@
               ">
               <th>STT</th>
               <th>Học viên</th>
-              <th>Lớp</th>
               <th>Số điện thoại</th>
+              <th>Email</th>
               <th>Giới tính</th>
-              <th>Trạng thái</th>
-              <th>Trạng thái</th>
+              <th>Địa chỉ</th>
             </tr>
           </thead>
           <tbody>
-            <tr style="text-align: center">
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+            <tr style="text-align: center" v-for="(s, index) in listStudent">
+              <td>{{ index + 1 }}</td>
+              <td>{{ s.fullName }}</td>
+              <td>{{ s.email }}</td>
+              <td>{{ s.phoneNumber }}</td>
+              <td>{{ s.gender }}</td>
+              <td>{{ s.address }}</td>
             </tr>
           </tbody>
         </table>
       </section>
-      <nav aria-label="Page navigation example" style="padding-left: 985px">
-        <ul class="pagination">
-          <li class="page-item">
-            <button class="page-link">Previous</button>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="#"></a>
-          </li>
-          <li class="page-item">
-            <button class="page-link">Next</button>
-          </li>
-        </ul>
-      </nav>
     </div>
   </div>
 </template>

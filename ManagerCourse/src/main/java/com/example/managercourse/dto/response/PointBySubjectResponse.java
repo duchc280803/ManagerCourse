@@ -15,11 +15,20 @@ public class PointBySubjectResponse {
 
     private Integer id;
 
-    private String pointName;
+    private String fullName;
 
-    private Integer weight;
+    private String subjectName;
 
-    private String description;
+    private BigDecimal point;
 
-    private Integer status;
+    public PointBySubjectResponse(String subjectName, BigDecimal point) {
+        this.subjectName = subjectName;
+        this.point = point;
+    }
+
+    public PointBySubjectResponse(String fullName, String subjectName, BigDecimal point) {
+        this.fullName = fullName;
+        this.subjectName = subjectName;
+        this.point = point;
+    }
 }

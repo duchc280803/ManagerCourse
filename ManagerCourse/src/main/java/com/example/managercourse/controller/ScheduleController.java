@@ -27,9 +27,10 @@ public class ScheduleController {
             @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(name = "id", required = false) Integer id,
-            @RequestParam(name = "subjectName", required = false) String subjectName
-    ) {
-        return new ResponseEntity<>(scheduleService.findAllSchedule(pageNumber, pageSize, id, subjectName), HttpStatus.OK);
+            @RequestParam(name = "idSubject", required = false) Integer idSubject,
+            Principal principal) {
+        String username = principal.getName();
+        return new ResponseEntity<>(scheduleService.findAllSchedule(pageNumber, pageSize, id, idSubject, username), HttpStatus.OK);
     }
 
     @PostMapping("create")

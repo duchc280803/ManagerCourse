@@ -27,7 +27,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "ORDER BY cl.id desc")
     Page<ClassResponse> searchClass(Pageable pageable,@Param("className") String className);
 
-    @Query("SELECT new com.example.managercourse.dto.response.UserInformationResponse(u.fullName, u.gender, u.phoneNumber, u.email) " +
+    @Query("SELECT new com.example.managercourse.dto.response.UserInformationResponse(u.id, u.fullName, u.gender, u.phoneNumber, u.email) " +
             "FROM Class cl JOIN cl.classDetailList cd JOIN cd.user u JOIN u.role rl " +
             "WHERE cl.id = :id")
     Page<UserInformationResponse> listStudentInformation(Pageable pageable, @Param("id") Integer id);
@@ -37,7 +37,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "WHERE cl.id = :id AND rl.role = 'TEACHER'")
     ClassDetailResponse detailClass(Integer id);
 
-    @Query("SELECT new com.example.managercourse.dto.response.CourseOfStudent(cl.className, s.subjectCode, s.subjectName, u.fullName, s.learningMode, s.studyTimeStart, s.studyTimeEnd, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.CourseOfStudent(cl.className, s.subjectCode, s.subjectName, u.fullName, s.learningMode, s.classify) " +
             "FROM CourseDetail cd " +
             "JOIN cd.course cs " +
             "JOIN cd.user u " +
@@ -52,11 +52,24 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     @Query("SELECT new com.example.managercourse.dto.response.ClassResponse(cl.id, cl.className) " +
             "FROM Class cl " +
+            "JOIN cl.classDetailList cld " +
+            "JOIN cld.user u WHERE u.username = :username")
+    List<ClassResponse> findAllClassNameForRole(@Param("username") String username);
+
+    @Query("SELECT new com.example.managercourse.dto.response.ClassResponse(cl.id, cl.className) " +
+            "FROM Class cl " +
             "JOIN cl.classDetailList cdl " +
             "JOIN cdl.user u " +
             "JOIN u.role rl " +
             "WHERE rl.role = 'STUDENT' AND u.username = :username")
     List<ClassResponse> findAllClassNameOfStudent(@Param("username") String username);
 
+    @Query("SELECT new com.example.managercourse.dto.response.StudentOfTeacherResponse(u.fullName, u.phoneNumber, u.email, u.gender, u.address) " +
+            "FROM Class cl " +
+            "JOIN cl.classDetailList cdl " +
+            "JOIN cdl.user u " +
+            "JOIN u.role rl " +
+            "WHERE rl.role = 'STUDENT' AND cl.className = :className")
+    List<StudentOfTeacherResponse> selectStudentOfTeacher(@Param("className") String className);
 
 }

@@ -5,27 +5,32 @@ import com.example.managercourse.dto.request.UpdateSubjectRequest;
 import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.dto.response.SubjectResponse;
 import com.example.managercourse.dto.response.SubjectUpdateResponse;
-import com.example.managercourse.entity.Course;
+import com.example.managercourse.entity.Schedule;
 import com.example.managercourse.entity.Subject;
-import com.example.managercourse.repository.CourseRepository;
+import com.example.managercourse.repository.ClassRepository;
+import com.example.managercourse.repository.ScheduleRepository;
 import com.example.managercourse.repository.SubjectRepository;
 import com.example.managercourse.service.SubjectService;
 import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private ClassRepository classRepository;
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
 
     @Override
     public List<SubjectResponse> getListSubjectName(Integer pageNumber, Integer pageSize) {
@@ -47,10 +52,9 @@ public class SubjectServiceImpl implements SubjectService {
                 .subjectCode(subjectCreateRequest.getSubjectCode())
                 .subjectName(subjectCreateRequest.getSubjectName())
                 .curriculumContent(subjectCreateRequest.getCurriculumContent())
-                .studyTimeEnd(subjectCreateRequest.getStudyTimeEnd())
-                .studyTimeStart(subjectCreateRequest.getStudyTimeStart())
                 .learningMode(subjectCreateRequest.getLearningMode())
                 .classify(subjectCreateRequest.getClassify())
+                .numberOfSessions(subjectCreateRequest.getNumberOfSessions())
                 .build();
         subjectRepository.save(subject);
         return MessageResponse.builder().message("Thêm thành công").build();
@@ -80,9 +84,8 @@ public class SubjectServiceImpl implements SubjectService {
         subject.setSubjectName(updateSubjectRequest.getSubjectName());
         subject.setCurriculumContent(updateSubjectRequest.getCurriculumContent());
         subject.setLearningMode(updateSubjectRequest.getLearningMode());
-        subject.setStudyTimeStart(updateSubjectRequest.getStudyTimeStart());
-        subject.setStudyTimeEnd(updateSubjectRequest.getStudyTimeEnd());
         subject.setClassify(updateSubjectRequest.getClassify());
+        subject.setNumberOfSessions(updateSubjectRequest.getNumberOfSessions());
     }
 
     @Override
@@ -97,10 +100,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getListSubjectByClass(Integer id, Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<SubjectResponse> subjectResponses = subjectRepository.getListSubjectByClass(id, pageable);
-        return subjectResponses.getContent();
+    public List<SubjectResponse> getListSubjectByClass(Integer id) {
+        return subjectRepository.getListSubjectByClass(id);
     }
 
     @Override
@@ -111,6 +112,47 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<SubjectResponse> getListSubjectAddCourse(Integer id) {
         return subjectRepository.getListSubjectAddCourse(id);
+    }
+
+    @Override
+    public List<SubjectResponse> getListSubjectForClass_Subject_Schedule(Integer idClass) {
+        // Lấy danh sách tất cả các môn học của lớp
+        List<SubjectResponse> subjectList = subjectRepository.getListSubjectByClass1(idClass);
+
+        // Lấy danh sách tất cả các lịch học của lớp
+        List<Schedule> scheduleList = scheduleRepository.findByAClassId(idClass);
+
+        // Tạo một HashSet chứa ID của các môn học đã được xếp lịch
+        Set<Integer> scheduledSubjectIds = new HashSet<>();
+        for (Schedule schedule : scheduleList) {
+            scheduledSubjectIds.add(schedule.getSubject().getId());
+        }
+
+        // Tạo danh sách để chứa các môn học có classify là 1
+        List<SubjectResponse> subjectResponsesClassify1 = new ArrayList<>();
+
+        // Tạo danh sách để chứa các môn học không có classify là 1
+        List<SubjectResponse> subjectResponsesOther = new ArrayList<>();
+
+        // Lọc ra những môn học chưa được xếp lịch và phân loại chúng vào danh sách tương ứng
+        for (SubjectResponse subject : subjectList) {
+            if (!scheduledSubjectIds.contains(subject.getId())) {
+                if (subject.getClassify() == 1) {
+                    subjectResponsesClassify1.add(subject);
+                } else {
+                    subjectResponsesOther.add(subject);
+                }
+            }
+        }
+
+        // Nếu danh sách các môn học có classify là 1 không rỗng, trả về danh sách này
+        if (!subjectResponsesClassify1.isEmpty()) {
+            return subjectResponsesClassify1;
+        }
+        // Nếu không, trả về danh sách các môn học không có classify là 1
+        else {
+            return subjectResponsesOther;
+        }
     }
 
 }

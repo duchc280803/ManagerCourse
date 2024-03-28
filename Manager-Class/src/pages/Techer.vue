@@ -228,7 +228,7 @@ const updateTeacher = async (id) => {
                 <th>Mã giảng viên</th>
                 <th>Họ tên</th>
                 <th>Giới tính</th>
-                <th style="width: 150px">Giảng dạy</th>
+                <th>Số khóa</th>
                 <th>Số điện thoại</th>
                 <th>Email</th>
                 <th>Địa chỉ</th>
@@ -246,13 +246,7 @@ const updateTeacher = async (id) => {
                 <td>{{ t.fullName }}</td>
                 <td>{{ t.gender == 1 ? "Nam" : "Nữ" }}</td>
                 <td>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example">
-                    <option v-for="cs in t.courseOfClassList" value="1">
-                      {{ cs.courseName }}
-                    </option>
-                  </select>
+                  {{ t.courseOfClassList.length }}
                 </td>
                 <td>{{ t.phoneNumber }}</td>
                 <td>{{ t.email }}</td>

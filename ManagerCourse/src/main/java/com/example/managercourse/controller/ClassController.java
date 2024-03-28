@@ -84,8 +84,12 @@ public class ClassController {
 
     @GetMapping("findAllClassName")
     public ResponseEntity<List<ClassResponse>> findAllClassName(
+            Principal principal
     ) {
-        return new ResponseEntity<>(classService.findAllClassName(), HttpStatus.OK);
+        if (principal == null || principal.getName().equals("admin")) {
+            return new ResponseEntity<>(classService.findAllClassName(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(classService.findAllClassName(principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("findAllClassNameOfStudent")
@@ -93,6 +97,13 @@ public class ClassController {
             Principal principal
     ) {
         return new ResponseEntity<>(classService.findAllClassNameOfStudent(principal.getName()), HttpStatus.OK);
+    }
+
+    @GetMapping("select-student-of-teacher")
+    public ResponseEntity<List<StudentOfTeacherResponse>> selectStudentOfTeacher(
+            @RequestParam("className") String className
+    ) {
+        return new ResponseEntity<>(classService.selectStudentOfTeacher(className), HttpStatus.OK);
     }
 
 }

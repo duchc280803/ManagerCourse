@@ -1,12 +1,31 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+var role = window.localStorage.getItem("role");
+const token = window.localStorage.getItem("token");
+const config = {
+  headers: {
+    Authorization: "Bearer " + token,
+  },
+};
+
 const listClass = ref([]);
+const listClassRole = ref([]);
+const listSchedule = ref([]);
+const subjectByClass = ref([]);
+const subjectByClassForSchedule = ref([]);
+
+var pageNumber = 0;
+var pageSize = 6;
+
+const selectedClassName = ref("");
+const selectedSubjectId = ref("");
+
 const fetchClassData = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/class/findAllClassName`
+      "http://localhost:8080/api/v1/class/findAllClassName"
     );
     listClass.value = response.data;
   } catch (error) {
@@ -15,32 +34,59 @@ const fetchClassData = async () => {
 };
 fetchClassData();
 
-const listSchedule = ref([]);
-var pageNumber = 0;
-var pageSize = 6;
-const selectedClassName = ref("");
-const fetchScheduleData = async () => {
+const fetchClassDataForRole = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/schedule/show?pageNumber=${pageNumber}&pageSize=${pageSize}&id=${
-        selectedClassName.value.id == undefined
-          ? ""
-          : selectedClassName.value.id
-      }`
+      "http://localhost:8080/api/v1/class/findAllClassName",
+      config
     );
-    listSchedule.value = response.data;
-    console.log(listSchedule.value);
+    listClassRole.value = response.data;
   } catch (error) {
     console.error("Error fetching class data:", error);
   }
 };
-fetchScheduleData();
-const nextPage = function () {
+fetchClassDataForRole();
+
+const fetchScheduleData = async () => {
+  try {
+    const classId = selectedClassName.value?.id || "";
+    const subjectId = selectedSubjectId.value || "";
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/schedule/show?pageNumber=${pageNumber}&pageSize=${pageSize}&id=${classId}&idSubject=${subjectId}`,
+      config
+    );
+    listSchedule.value = response.data;
+  } catch (error) {
+    console.error("Error fetching schedule data:", error);
+  }
+};
+
+const futureScheduleList = computed(() => {
+  const currentDate = new Date();
+  return listSchedule.value.filter((s) => {
+    // Chỉ hiển thị các mục với ngày sau ngày hiện tại
+    return new Date(s.dateLean) > currentDate;
+  });
+});
+
+const fetchSubjectsByClass = async () => {
+  try {
+    const classId = selectedClassName.value?.id || "";
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/subject/subject-by-class?id=${classId}`
+    );
+    subjectByClass.value = response.data;
+  } catch (error) {
+    console.error("Error fetching subjects by class:", error);
+  }
+};
+
+const nextPage = () => {
   pageNumber++;
   fetchScheduleData();
 };
 
-const previousPage = function () {
+const previousPage = () => {
   if (pageNumber > 0) {
     pageNumber--;
     fetchScheduleData();
@@ -48,8 +94,11 @@ const previousPage = function () {
 };
 
 watch(selectedClassName, () => {
+  fetchSubjectsByClass();
   fetchScheduleData();
 });
+
+watch(selectedSubjectId, fetchScheduleData);
 
 const classRoomName = ref([]);
 const fetchClassRoomNameData = async () => {
@@ -64,20 +113,19 @@ const fetchClassRoomNameData = async () => {
 };
 fetchClassRoomNameData();
 
-const subjectByClass = ref([]);
 const idClass = ref("");
-const getListSubjectByClass = async () => {
+const fetchSubjectsByClassForSchedule = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/subject/subject-by-class?id=${idClass.value.id}`
+      `http://localhost:8080/api/v1/subject/subject-by-class-schedule?id=${idClass.value.id}`
     );
-    subjectByClass.value = response.data;
+    subjectByClassForSchedule.value = response.data;
   } catch (error) {
     console.error("Error fetching class data:", error);
   }
 };
 watch(idClass, () => {
-  getListSubjectByClass();
+  fetchSubjectsByClassForSchedule();
 });
 const idSubject = ref("");
 const idClassRoom = ref("");
@@ -232,6 +280,7 @@ const updateSchedule = async (id) => {
     style="
       width: 1192px;
       margin-left: 30px;
+      height: 605px;
       border-radius: 10px;
       margin-bottom: 30px;
     ">
@@ -254,9 +303,15 @@ const updateSchedule = async (id) => {
       <div class="row search_table">
         <div class="col-4">
           <div class="input-group-prepend position-relative">
-            <select class="form-select" aria-label="Default select example">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="selectedClassName">
               <option value="" disabled>Chọn lớp</option>
-              <option :value="cl" :key="index" v-for="(cl, index) in listClass">
+              <option
+                :value="cl"
+                :key="index"
+                v-for="(cl, index) in listClassRole">
                 {{ cl.className }}
               </option>
             </select>
@@ -267,7 +322,7 @@ const updateSchedule = async (id) => {
             <select
               class="form-select"
               aria-label="Default select example"
-              v-model="idSubject">
+              v-model="selectedSubjectId">
               <option value="" disabled>Chọn môn</option>
               <option :value="s.id" v-for="(s, index) in subjectByClass">
                 {{ s.subjectName }}
@@ -276,7 +331,7 @@ const updateSchedule = async (id) => {
           </div>
         </div>
         <div class="col-2"></div>
-        <div class="col-2">
+        <div class="col-2" v-show="role === 'ADMIN'">
           <button
             data-bs-toggle="modal"
             data-bs-target="#schedule-add"
@@ -313,7 +368,7 @@ const updateSchedule = async (id) => {
           </thead>
           <tbody>
             <tr
-              v-for="(s, index) in listSchedule"
+              v-for="(s, index) in futureScheduleList"
               :key="index"
               style="text-align: center">
               <td>{{ index + 1 + pageNumber * pageSize }}</td>
@@ -418,7 +473,7 @@ const updateSchedule = async (id) => {
                     aria-label="Default select example"
                     v-model="idSubject">
                     <option value="" disabled>Chọn môn</option>
-                    <option :value="s.id" v-for="(s, index) in subjectByClass">
+                    <option :value="s.id" v-for="(s, index) in subjectByClassForSchedule">
                       {{ s.subjectName }}
                     </option>
                   </select>

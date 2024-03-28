@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import axios from "axios";
 
 const token = window.localStorage.getItem("token");
-
+console.log(token);
 const listCourseNames = ref([]);
 const selectedCourse = ref(null);
 const listCourseOfStudent = ref([]);

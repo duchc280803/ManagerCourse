@@ -13,7 +13,7 @@ const idParam = route.params.id;
  */
 const listSubject = ref([]);
 var pageNumber = 0;
-var pageSize = 6;
+var pageSize = 5;
 const getListSubjectName = async () => {
   axios
     .get(
@@ -43,8 +43,7 @@ const subjectCode = ref("SUBJECT_CODE" + new Date().getTime());
 const subjectName = ref("");
 const curriculumContent = ref("");
 const learningMode = ref("");
-const studyTimeStart = ref("");
-const studyTimeEnd = ref("");
+const numberOfSessions = ref("");
 const classify = ref("");
 const errorCreateSubject = ref({});
 const createSubject = async () => {
@@ -65,8 +64,7 @@ const createSubject = async () => {
         subjectName: subjectName.value,
         curriculumContent: curriculumContent.value,
         learningMode: learningMode.value,
-        studyTimeStart: studyTimeStart.value,
-        studyTimeEnd: studyTimeEnd.value,
+        numberOfSessions: numberOfSessions.value,
         classify: classify.value,
       };
       axios
@@ -257,8 +255,8 @@ function refreshSubject() {
                 <th style="width: 100px">Loại môn</th>
                 <th>Nội dung</th>
                 <th style="width: 80px">Hình thức</th>
-                <th style="width: 150px">Thời gian</th>
-                <th style="width: 120px" v-show="role == 'ADMIN'">Hành động</th>
+                <th>Số buổi</th>
+                <th v-show="role == 'ADMIN'">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -292,8 +290,8 @@ function refreshSubject() {
                 </td>
                 <td>{{ s.curriculumContent }}</td>
                 <td>{{ s.learningMode == 1 ? "Online" : "Offline" }}</td>
-                <td style="width: 120px">
-                  {{ s.studyTimeStart }} | {{ s.studyTimeEnd }}
+                <td >
+                  {{ s.numberOfSessions }}
                 </td>
                 <td v-show="role == 'ADMIN'">
                   <button
@@ -308,20 +306,6 @@ function refreshSubject() {
                       font-weight: 600;
                     ">
                     Sửa
-                  </button>
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#point"
-                    @click="getListStudyPoint(s.id)"
-                    style="
-                      text-decoration: none;
-                      background-color: #fc6736;
-                      border-radius: 5px;
-                      color: black;
-                      font-weight: 600;
-                      margin-left: 5px;
-                    ">
-                    Đầu điểm
                   </button>
                 </td>
               </tr>
@@ -470,33 +454,17 @@ function refreshSubject() {
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
                 <div>
-                  Thời gian bắt đầu
+                  Số buổi
                   <span class="text-danger ng-star-inserted">*</span>
                 </div>
               </div>
               <div class="col-7">
                 <input
-                  type="date"
+                  type="number"
                   class="form-control an-select"
-                  v-model="studyTimeStart" />
+                  v-model="numberOfSessions" placeholder="Số buổi"/>
                 <span style="color: red">{{
-                  errorCreateSubject.studyTimeStart
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Thời gian kết thúc
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <input
-                  type="date"
-                  class="form-control an-select"
-                  v-model="studyTimeEnd" />
-                <span style="color: red">{{
-                  errorCreateSubject.studyTimeEnd
+                  errorCreateSubject.numberOfSessions
                 }}</span>
               </div>
             </div>
@@ -643,33 +611,17 @@ function refreshSubject() {
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
                 <div>
-                  Thời gian bắt đầu
+                  Số buổi
                   <span class="text-danger ng-star-inserted">*</span>
                 </div>
               </div>
               <div class="col-7">
                 <input
-                  type="date"
+                  type="number"
                   class="form-control an-select"
-                  v-model="subjectUpdate.studyTimeStart" />
+                  v-model="subjectUpdate.numberOfSessions" placeholder="Số buổi"/>
                 <span style="color: red">{{
-                  errorUpdateSubject.studyTimeStart
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Thời gian kết thúc
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <input
-                  type="date"
-                  class="form-control an-select"
-                  v-model="subjectUpdate.studyTimeEnd" />
-                <span style="color: red">{{
-                  errorUpdateSubject.studyTimeEnd
+                  errorUpdateSubject.numberOfSessions
                 }}</span>
               </div>
             </div>

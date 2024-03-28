@@ -1,10 +1,7 @@
 package com.example.managercourse.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -12,6 +9,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "point")
 public class Point {
@@ -26,7 +24,8 @@ public class Point {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "study_point_id")
-    private StudyPoint studyPoint;
+    @ManyToOne()
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
+
 }

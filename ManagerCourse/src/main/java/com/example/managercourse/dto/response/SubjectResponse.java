@@ -23,9 +23,7 @@ public class SubjectResponse {
 
     private Integer learningMode;
 
-    private LocalDate studyTimeStart;
-
-    private LocalDate studyTimeEnd;
+    private Integer numberOfSessions;
 
     private Integer classify;
 

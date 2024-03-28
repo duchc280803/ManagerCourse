@@ -29,15 +29,10 @@ public class UpdateSubjectRequest {
     @Max(value = 1, message = "Learning mode must be at most 1")
     private Integer learningMode;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @NotNull(message = "StudyTimeStart of birth is required")
-    private LocalDate studyTimeStart;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @NotNull(message = "StudyTimeEnd of birth is required")
-    private LocalDate studyTimeEnd;
-
     @NotNull(message = "Classify is required")
     private Integer classify;
+
+    @NotNull(message = "Number of sessions is required")
+    private Integer numberOfSessions;
 
 }

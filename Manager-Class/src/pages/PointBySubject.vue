@@ -1,11 +1,17 @@
 <script setup>
 import { ref, watch } from "vue";
 import axios from "axios";
+
+// Khai báo các biến ref
 const token = window.localStorage.getItem("token");
+console.log(token);
 const listCourseNames = ref([]);
 const selectedCourse = ref(null);
+const selectedSubject = ref(null);
 const listSubject = ref([]);
+const listPointStudent = ref([]);
 
+// Hàm fetch dữ liệu các khóa học
 const fetchData = async () => {
   const config = {
     headers: {
@@ -23,18 +29,32 @@ const fetchData = async () => {
   }
 };
 
+// Hàm lấy danh sách môn học dựa trên khóa học đã chọn
 const getListSubjectName = async () => {
-  axios
-    .get(
-      `http://localhost:8080/api/v1/subject/subject-by-course?courseName=${selectedCourse.value.courseName}`
-    )
-    .then(function (response) {
-      listSubject.value = response.data;
-    });
+  if (selectedCourse.value) {
+    const config = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+    axios
+      .get(
+        `http://localhost:8080/api/v1/point/select-point-student?courseName=${selectedCourse.value.courseName}`,
+        config
+      )
+      .then(function (response) {
+        listSubject.value = response.data;
+        console.log(listSubject.value);
+      });
+  }
 };
+
+// Sử dụng watch để theo dõi sự thay đổi của selectedCourse và gọi hàm getListSubjectName
 watch(selectedCourse, () => {
   getListSubjectName();
 });
+
+// Gọi fetchData để lấy danh sách khóa học khi component được khởi tạo
 fetchData();
 </script>
 <template>
@@ -42,7 +62,6 @@ fetchData();
     class="card"
     style="
       width: 1192px;
-      height: 585px;
       margin-left: 30px;
       border-radius: 10px;
       margin-bottom: 30px;
@@ -53,7 +72,7 @@ fetchData();
       </div>
     </div>
     <div class="row search_table" style="margin: 10px">
-      <div class="col-6">
+      <div class="col-12">
         <select
           class="form-select"
           aria-label="Default select example"
@@ -66,19 +85,10 @@ fetchData();
           </option>
         </select>
       </div>
-      <div class="col-lg-6">
-        <select class="form-select" aria-label="Default select example">
-          <option value="" disabled>Tên môn</option>
-          <option
-            v-for="(subject, index) in listSubject"
-            :key="index"
-            :value="subject">
-            {{ subject.subjectName }}
-          </option>
-        </select>
-      </div>
+      <div class="col-lg-6"></div>
     </div>
     <div class="card-body">
+      <h1></h1>
       <section class="section-table">
         <table>
           <thead>
@@ -89,19 +99,22 @@ fetchData();
                 text-align: center;
               ">
               <th>STT</th>
-              <th>Tên đầu điểm</th>
-              <th>Trọng số</th>
+              <th>Tên môn</th>
               <th>Điểm</th>
-              <th>Ghi chú</th>
+              <th>Trạng Thái</th>
             </tr>
           </thead>
           <tbody>
-            <tr style="text-align: center">
-              <td>1</td>
-              <td>Document</td>
-              <td>10</td>
-              <td>7.0</td>
-              <td>Tốt</td>
+            <tr style="text-align: center" v-for="(item, index) in listSubject">
+              <td>{{ index + 1 }}</td>
+              <td>{{ item.subjectName }}</td>
+              <td>{{ item.point }}</td>
+              <td
+                :style="{
+                  color: item.point < 5 ? 'red' : 'green',
+                }">
+                {{ item.point < 5 ? "False" : "Passed" }}
+              </td>
             </tr>
           </tbody>
         </table>

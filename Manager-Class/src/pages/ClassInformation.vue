@@ -33,19 +33,6 @@ const previousPage = function () {
   }
 };
 
-const teacherInformation = ref({});
-const fetchTeacherInformation = async () => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/class/teacher-information?id=${idParam}`
-    );
-    teacherInformation.value = response.data;
-  } catch (error) {
-    console.error("Error fetching class data:", error);
-  }
-};
-fetchTeacherInformation();
-
 const studentCheckBox = ref([]);
 const fetchStudentCheckBox = async () => {
   try {
@@ -189,6 +176,18 @@ getListsubjectName();
 watch(selectedSubjectName, () => {
   fetchScheduleData();
 });
+
+const selectPointForStudent = ref([]);
+const selectPointForStudents = async (id) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/point/select-point-for-user?id=${id}`
+    );
+    selectPointForStudent.value = response.data;
+  } catch (error) {
+    console.error("Error fetching class data:", error);
+  }
+};
 </script>
 <template>
   <div class="container class">
@@ -207,9 +206,7 @@ watch(selectedSubjectName, () => {
     >
     <div class="row">
       <div class="col-lg-6">
-        <div
-          class="card"
-          style="height: 575px; margin-bottom: 14px; border-radius: 5px">
+        <div class="card" style="margin-bottom: 14px; border-radius: 5px">
           <div class="card-header">
             <div class="card-title">
               <div class="row">
@@ -227,7 +224,6 @@ watch(selectedSubjectName, () => {
                     ">
                     <th>STT</th>
                     <th>Tên môn</th>
-                    <th>Giảng viên</th>
                     <th style="width: 110px">Thời gian</th>
                     <th style="width: 100px">Loại môn</th>
                   </tr>
@@ -238,7 +234,6 @@ watch(selectedSubjectName, () => {
                     style="text-align: center">
                     <td>{{ index + 1 + pageNumber * pageSize }}</td>
                     <td>{{ s.subjectName }}</td>
-                    <td>{{ teacherInformation.fullName }}</td>
                     <td>{{ s.studyTimeStart }} | {{ s.studyTimeEnd }}</td>
                     <td>
                       <span
@@ -265,32 +260,11 @@ watch(selectedSubjectName, () => {
                 </tbody>
               </table>
             </section>
-            <nav
-              aria-label="Page navigation example"
-              style="padding-left: 400px">
-              <ul class="pagination">
-                <li class="page-item">
-                  <button class="page-link" @click="previousPageSubject()">
-                    Previous
-                  </button>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="#">{{ pageNumber + 1 }}</a>
-                </li>
-                <li class="page-item">
-                  <button class="page-link" @click="nextPageSubject()">
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </nav>
           </div>
         </div>
       </div>
       <div class="col-lg-6">
-        <div
-          class="card"
-          style="height: 575px; margin-bottom: 14px; border-radius: 5px">
+        <div class="card" style="margin-bottom: 14px; border-radius: 5px">
           <div class="card-header">
             <div class="card-title">
               <div class="row">
@@ -348,7 +322,8 @@ watch(selectedSubjectName, () => {
                           color: black;
                           margin-top: 15px;
                           font-weight: 600;
-                        ">
+                        "
+                        @click="selectPointForStudents(s.id)">
                         Xem điểm
                       </button>
                     </td>
@@ -359,65 +334,6 @@ watch(selectedSubjectName, () => {
           </div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="row">
-        <div class="col-6">
-          <select
-            class="form-select"
-            aria-label="Default select example"
-            style="margin: 10px" v-model="selectedSubjectName">
-            <option value="" disabled>Chọn môn</option>
-            <option :value="s" :key="index" v-for="(s, index) in subjectName">
-              {{ s.subjectName }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <section class="section-table" style="margin: 20px">
-        <table>
-          <thead>
-            <tr
-              style="
-                background-color: #d5d1defe;
-                height: 52px;
-                text-align: center;
-              ">
-              <th>STT</th>
-              <th>Tên môn</th>
-              <th>Tên phòng</th>
-              <th>Tầng</th>
-              <th>Ngày học</th>
-              <th>Thời gian học</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="text-align: center" v-for="(sc, index) in listSchedule">
-              <td>{{ index + 1 + pageNumberSchedule * pageSizeSchedule }}</td>
-              <td>{{ sc.subjectName }}</td>
-              <td>{{ sc.classRoomName }}</td>
-              <td>{{ sc.floor }}</td>
-              <td>{{ sc.dateLearn }}</td>
-              <td>{{ sc.timeStart }} - {{ sc.timeEnd }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      <nav aria-label="Page navigation example" style="padding-left: 990px">
-        <ul class="pagination">
-          <li class="page-item">
-            <button class="page-link" @click="previousPageSchedule()">
-              Previous
-            </button>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="#">{{ pageNumberSchedule + 1 }}</a>
-          </li>
-          <li class="page-item">
-            <button class="page-link" @click="nextPageSchedule()">Next</button>
-          </li>
-        </ul>
-      </nav>
     </div>
   </div>
   <!-- Modal point-->
@@ -454,18 +370,23 @@ watch(selectedSubjectName, () => {
                   <th>Họ tên</th>
                   <th>Môn</th>
                   <th>Điểm</th>
-                  <th>Ghi chú</th>
                   <th>Trạng thái</th>
                 </tr>
               </thead>
               <tbody>
-                <tr style="text-align: center">
-                  <td>1</td>
-                  <td>Hoàng Công Đức</td>
-                  <td>Java core</td>
-                  <td>10</td>
-                  <td>Tốt</td>
-                  <td>Passed</td>
+                <tr
+                  style="text-align: center"
+                  v-for="(s, index) in selectPointForStudent">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ s.fullName }}</td>
+                  <td>{{ s.subjectName }}</td>
+                  <td>{{ s.point }}</td>
+                  <td
+                    :style="{
+                      color: s.point < 5 ? 'red' : 'green',
+                    }">
+                    {{ s.point < 5 ? "False" : "Passed" }}
+                  </td>
                 </tr>
               </tbody>
             </table>

@@ -1,10 +1,7 @@
 package com.example.managercourse.service;
 
 import com.example.managercourse.dto.request.TeacherRequest;
-import com.example.managercourse.dto.response.MessageResponse;
-import com.example.managercourse.dto.response.TeacherResponse;
-import com.example.managercourse.dto.response.TeacherSearchResponse;
-import com.example.managercourse.dto.response.UpdateTeacherResponse;
+import com.example.managercourse.dto.response.*;
 
 import java.util.List;
 

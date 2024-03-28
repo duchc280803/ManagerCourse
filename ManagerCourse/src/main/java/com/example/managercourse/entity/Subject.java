@@ -31,15 +31,9 @@ public class Subject {
     @Column(name = "learning_mode")
     private Integer learningMode;
 
-    @Column(name = "study_time_start")
-    private LocalDate studyTimeStart;
-
-    @Column(name = "study_time_end")
-    private LocalDate studyTimeEnd;
+    private Integer numberOfSessions;
 
     private Integer classify;
-
-    private Integer status;
 
     @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
     private List<Schedule> scheduleList;
@@ -48,6 +42,9 @@ public class Subject {
     private List<SubjectDetail> subjectDetailList;
 
     @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-    private List<PointDetail> pointDetailList;
+    private List<StatusSubject> statusSubjectList;
+
+    @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
+    private List<Point> pointList;
 
 }

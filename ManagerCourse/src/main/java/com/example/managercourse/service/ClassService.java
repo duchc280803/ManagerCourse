@@ -4,6 +4,7 @@ import com.example.managercourse.dto.request.ClassRequest;
 import com.example.managercourse.dto.request.StudentAddClassRequest;
 import com.example.managercourse.dto.response.*;
 import com.example.managercourse.entity.Class;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -27,6 +28,10 @@ public interface ClassService {
 
     List<ClassResponse> findAllClassName();
 
+    List<ClassResponse> findAllClassName(String username);
+
     List<ClassResponse> findAllClassNameOfStudent(String username);
+
+    List<StudentOfTeacherResponse> selectStudentOfTeacher(String className);
 
 }

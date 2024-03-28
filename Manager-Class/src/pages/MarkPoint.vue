@@ -1,52 +1,83 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch, watchEffect } from "vue";
+import axios from "axios";
 
-const students = ref([
-  {
-    name: "Hoàng Công Đức",
-    lab1: 34,
-    lab2: 56,
-    lab3: 78,
-    assignment: 90,
-    total: 34,
-    status: "Passed",
-    editing: { lab1: false, lab2: false, lab3: false, assignment: false },
+const subjectByClass = ref([]);
+const selectPointForUsers = ref([]);
+
+const selectedClassName = ref("");
+const selectedSubjectName = ref("");
+
+const token = window.localStorage.getItem("token");
+const config = {
+  headers: {
+    Authorization: "Bearer " + token,
   },
-]);
-
-const gradeHeaders = ref([
-  "Lab 1 (20%)",
-  "Lab 2 (20%)",
-  "Lab 3 (20%)",
-  "Assignment (40%)",
-]);
-
-const editGrade = (student, field) => {
-  student.editing[field] = true;
 };
-
-const saveGrade = (student, field) => {
-  student.editing[field] = false;
-  student.total =
-    parseInt(student.lab1) * 0.2 +
-    parseInt(student.lab2) * 0.2 +
-    parseInt(student.lab3) * 0.2 +
-    parseInt(student.assignment) * 0.4;
-  student.status = student.total >= 40 ? "Passed" : "Failed";
-};
-
-const listClass = ref([]);
-const fetchClassData = async () => {
+const listClassRole = ref([]);
+const fetchClassDataForRole = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/class/findAllClassName`
+      "http://localhost:8080/api/v1/class/findAllClassName",
+      config
     );
-    listClass.value = response.data;
+    listClassRole.value = response.data;
   } catch (error) {
     console.error("Error fetching class data:", error);
   }
 };
-fetchClassData();
+fetchClassDataForRole();
+
+const fetchSubjectsByClass = async () => {
+  try {
+    const classId = selectedClassName.value?.id || "";
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/subject/subject-by-class?id=${classId}`
+    );
+    subjectByClass.value = response.data;
+  } catch (error) {
+    console.error("Error fetching subjects by class:", error);
+  }
+};
+
+const selectPointTeacher = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/point/select-point-teacher?subjectName=${selectedSubjectName.value.subjectName}&className=${selectedClassName.value.className}`
+    );
+    selectPointForUsers.value = response.data;
+    console.log(selectPointForUsers.value);
+  } catch (error) {
+    console.error("Error fetching subjects by class:", error);
+  }
+};
+
+watch(selectedClassName, () => {
+  fetchSubjectsByClass();
+});
+
+watchEffect(() => {
+  if (selectedClassName.value && selectedSubjectName.value) {
+    selectPointTeacher();
+  }
+});
+function editPoint(index) {
+  this.selectPointForUsers[index].editing = true;
+}
+function savePoint(idUser, point) {
+  const formData = {
+    point: point,
+  };
+
+  axios
+    .post(
+      `http://localhost:8080/api/v1/point/create?idSubject=${selectedSubjectName.value.id}&idUser=${idUser}`,
+      formData
+    )
+    .then((response) => {
+      this.fetchSubjectsByClass();
+    });
+}
 </script>
 
 <template>
@@ -54,7 +85,6 @@ fetchClassData();
     class="card"
     style="
       width: 1192px;
-      height: 585px;
       margin-left: 30px;
       border-radius: 10px;
       margin-bottom: 30px;
@@ -68,15 +98,31 @@ fetchClassData();
       <div class="row search_table">
         <div class="col-4">
           <div class="input-group-prepend position-relative">
-            <select class="form-select" aria-label="Default select example">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="selectedClassName">
               <option value="" disabled>Chọn lớp</option>
-              <option :value="cl" :key="index" v-for="(cl, index) in listClass">
+              <option
+                :value="cl"
+                :key="index"
+                v-for="(cl, index) in listClassRole">
                 {{ cl.className }}
               </option>
             </select>
           </div>
         </div>
-        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            v-model="selectedSubjectName">
+            <option value="" disabled>Chọn môn</option>
+            <option :value="s" v-for="(s, index) in subjectByClass">
+              {{ s.subjectName }}
+            </option>
+          </select>
+        </div>
         <div class="col-2"></div>
         <div class="col-2"></div>
       </div>
@@ -91,77 +137,38 @@ fetchClassData();
               ">
               <th>STT</th>
               <th>Học viên</th>
-              <th v-for="(item, index) in gradeHeaders" :key="index">
-                {{ item }}
-              </th>
-              <th>Điểm tổng</th>
+              <th>Điểm</th>
               <th>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="(student, index) in students"
-              :key="index"
-              style="text-align: center">
+              style="text-align: center"
+              v-for="(s, index) in selectPointForUsers"
+              :key="s.idUser">
               <td>{{ index + 1 }}</td>
-              <td>{{ student.name }}</td>
-              <td @click="editGrade(student, 'lab1')">
-                <span v-if="!student.editing.lab1">{{ student.lab1 }}</span>
-                <input
-                  v-else
-                  type="text"
-                  v-model="student.lab1"
-                  class="form-control"
-                  @blur="saveGrade(student, 'lab1')" />
+              <td>{{ s.fullName }}</td>
+              <td>
+                <template v-if="!s.editing && !s.hasScore">
+                  <span @dblclick="editPoint(index)">{{ s.point }}</span>
+                </template>
+                <template v-else>
+                  <input
+                    v-if="!s.point"
+                    type="number"
+                    class="form-control"
+                    v-model="s.point"
+                    @blur="savePoint(s.idUser, s.point)" />
+                  <span v-else>{{ s.point }}</span>
+                </template>
               </td>
-              <td @click="editGrade(student, 'lab2')">
-                <span v-if="!student.editing.lab2">{{ student.lab2 }}</span>
-                <input
-                  v-else
-                  type="text"
-                  v-model="student.lab2"
-                  class="form-control"
-                  @blur="saveGrade(student, 'lab2')" />
+              <td :style="{ color: s.point < 5 ? 'red' : 'green' }">
+                {{ s.point < 5 ? "False" : "Passed" }}
               </td>
-              <td @click="editGrade(student, 'lab3')">
-                <span v-if="!student.editing.lab3">{{ student.lab3 }}</span>
-                <input
-                  v-else
-                  type="text"
-                  v-model="student.lab3"
-                  class="form-control"
-                  @blur="saveGrade(student, 'lab3')" />
-              </td>
-              <td @click="editGrade(student, 'assignment')">
-                <span v-if="!student.editing.assignment">{{
-                  student.assignment
-                }}</span>
-                <input
-                  v-else
-                  type="text"
-                  v-model="student.assignment"
-                  class="form-control"
-                  @blur="saveGrade(student, 'assignment')" />
-              </td>
-              <td>{{ student.total }}</td>
-              <td>{{ student.status }}</td>
             </tr>
           </tbody>
         </table>
       </section>
-      <nav aria-label="Page navigation example" style="padding-left: 985px">
-        <ul class="pagination">
-          <li class="page-item">
-            <button class="page-link">Previous</button>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="#"></a>
-          </li>
-          <li class="page-item">
-            <button class="page-link">Next</button>
-          </li>
-        </ul>
-      </nav>
     </div>
   </div>
 </template>
