@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/point/**").permitAll()
                         .requestMatchers("/api/v1/class-room/**").permitAll()
                         .requestMatchers("/api/v1/schedule/**").permitAll()
+                        .requestMatchers("/api/v1/contact/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

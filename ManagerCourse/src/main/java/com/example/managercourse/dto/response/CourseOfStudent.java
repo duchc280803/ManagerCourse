@@ -24,4 +24,6 @@ public class CourseOfStudent {
     private Integer learningMode;
 
     private Integer status;
+
+    private Integer numberOfSessions;
 }

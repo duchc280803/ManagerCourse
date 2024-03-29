@@ -7,6 +7,7 @@ import com.example.managercourse.dto.response.ScheduleDetailResponse;
 import com.example.managercourse.dto.response.ScheduleResponse;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ScheduleService {
@@ -21,4 +22,5 @@ public interface ScheduleService {
 
     List<ScheduleResponse> findAllScheduleByCourse(Integer pageNumber, Integer pageSize, Integer id, String username);
 
+    Boolean checkTimeSchedule(LocalTime timeStart, LocalTime timeEnd, Integer day, Integer id);
 }

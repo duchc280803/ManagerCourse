@@ -484,7 +484,7 @@ table {
   width: 100%;
 }
 .section-table {
-  max-height: calc(89% - 1.6rem);
+ 
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;

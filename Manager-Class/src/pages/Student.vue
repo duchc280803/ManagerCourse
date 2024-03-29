@@ -101,7 +101,7 @@ const createStudent = async () => {
         courseName: courseName.value,
         startDateLearn: startDateLearn.value,
         username: username.value,
-        password: password.value
+        password: password.value,
       };
       axios
         .post(`http://localhost:8080/api/v1/student/create`, newStudent)
@@ -193,16 +193,16 @@ const updateStudent = async (id) => {
         );
         fetchStudentData();
         let modal = document.getElementById("student-update");
-          if (modal) {
-            modal.classList.remove("show");
-            modal.setAttribute("aria-hidden", "true");
-            modal.style.display = "none";
-            let modalBackdrop =
-              document.getElementsByClassName("modal-backdrop")[0];
-            if (modalBackdrop) {
-              modalBackdrop.parentNode.removeChild(modalBackdrop);
-            }
+        if (modal) {
+          modal.classList.remove("show");
+          modal.setAttribute("aria-hidden", "true");
+          modal.style.display = "none";
+          let modalBackdrop =
+            document.getElementsByClassName("modal-backdrop")[0];
+          if (modalBackdrop) {
+            modalBackdrop.parentNode.removeChild(modalBackdrop);
           }
+        }
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -525,7 +525,9 @@ const updateStudent = async (id) => {
                     v-model="email" />
                 </div>
                 <span style="color: red">{{ errorStudentCreated.email }}</span>
-                <span style="color: red">{{ errorStudentCreated.messageEmail }}</span>
+                <span style="color: red">{{
+                  errorStudentCreated.messageEmail
+                }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -557,7 +559,8 @@ const updateStudent = async (id) => {
                   <input
                     type="text"
                     class="form-control an-select"
-                    v-model="username" placeholder="Username..."/>
+                    v-model="username"
+                    placeholder="Username..." />
                 </div>
                 <span style="color: red">{{
                   errorStudentCreated.username
@@ -574,9 +577,10 @@ const updateStudent = async (id) => {
               <div class="col-7">
                 <div>
                   <input
-                    type="text"
+                    type="password"
                     class="form-control an-select"
-                    v-model="password" placeholder="Password..."/>
+                    v-model="password"
+                    placeholder="Password..." />
                 </div>
                 <span style="color: red">{{
                   errorStudentCreated.password
@@ -803,7 +807,7 @@ const updateStudent = async (id) => {
   font-family: BaiJamjuree !important;
 }
 .section-table {
-  max-height: calc(89% - 1.6rem);
+ 
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;

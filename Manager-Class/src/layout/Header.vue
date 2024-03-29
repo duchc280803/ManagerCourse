@@ -450,6 +450,23 @@ console.log(auth);
                         </a>
                       </li>
                     </RouterLink>
+                    <RouterLink to="/contact" v-show="role === 'ADMIN'">
+                      <li class="sidebar-item">
+                        <a
+                          class="sidebar-link"
+                          href="#/order-counter"
+                          aria-expanded="false">
+                          <span>
+                            <img
+                              src="../assets/img/contacts.png"
+                              width="180"
+                              alt=""
+                              style="width: 21px; height: 21px" />
+                          </span>
+                          <span class="hide-menu">Contact</span>
+                        </a>
+                      </li>
+                    </RouterLink>
                   </ul>
                 </div>
               </div>

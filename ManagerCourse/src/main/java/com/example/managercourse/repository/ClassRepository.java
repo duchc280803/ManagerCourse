@@ -37,7 +37,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "WHERE cl.id = :id AND rl.role = 'TEACHER'")
     ClassDetailResponse detailClass(Integer id);
 
-    @Query("SELECT new com.example.managercourse.dto.response.CourseOfStudent(cl.className, s.subjectCode, s.subjectName, u.fullName, s.learningMode, s.classify) " +
+    @Query("SELECT new com.example.managercourse.dto.response.CourseOfStudent(cl.className, s.subjectCode, s.subjectName, u.fullName, s.learningMode, s.classify, s.numberOfSessions) " +
             "FROM CourseDetail cd " +
             "JOIN cd.course cs " +
             "JOIN cd.user u " +

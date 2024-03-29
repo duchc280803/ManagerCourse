@@ -127,12 +127,33 @@ const fetchSubjectsByClassForSchedule = async () => {
 watch(idClass, () => {
   fetchSubjectsByClassForSchedule();
 });
+
 const idSubject = ref("");
 const idClassRoom = ref("");
 const day = ref("");
 const timeStart = ref("");
 const timeEnd = ref("");
 const errorSchedule = ref({});
+
+const checkTimeSchedule = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/schedule/check-time`,
+      {
+        params: {
+          startTime: timeStart.value,
+          endTime: timeEnd.value,
+          day: day.value,
+          id: idClass.value.id, // Assuming idClass.value.id refers to the class id
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createSchedule = async () => {
   Swal.fire({
     title: "Bạn có muốn thêm mới lịch học không?",
@@ -154,26 +175,43 @@ const createSchedule = async () => {
         timeEnd: timeEnd.value,
         timeStart: timeStart.value,
       };
-      axios
-        .post(`http://localhost:8080/api/v1/schedule/create`, scheduleData)
-        .then(function (response) {
-          listSchedule.value.push(response.data);
-          fetchScheduleData();
-          let modal = document.getElementById("schedule-add");
-          if (modal) {
-            modal.classList.remove("show");
-            modal.setAttribute("aria-hidden", "true");
-            modal.style.display = "none";
-            let modalBackdrop =
-              document.getElementsByClassName("modal-backdrop")[0];
-            if (modalBackdrop) {
-              modalBackdrop.parentNode.removeChild(modalBackdrop);
-            }
-          }
-        })
-        .catch(function (error) {
-          errorSchedule.value = error.response.data;
+      const isTimeAvailable = await checkTimeSchedule();
+      if (isTimeAvailable) {
+        toast('My message', 'error');
+        Swal.fire({
+          position: "top-end",
+          icon: "warning",
+          title: "Thời gian học trùng với lớp khác ",
+          timer: 1500,
+          width: "400px",
+          height: "300px",
+          customClass: {
+            popup: "small-popup",
+          },
+          showConfirmButton: false,
         });
+      } else {
+        axios
+          .post(`http://localhost:8080/api/v1/schedule/create`, scheduleData)
+          .then(function (response) {
+            listSchedule.value.push(response.data);
+            fetchScheduleData();
+            let modal = document.getElementById("schedule-add");
+            if (modal) {
+              modal.classList.remove("show");
+              modal.setAttribute("aria-hidden", "true");
+              modal.style.display = "none";
+              let modalBackdrop =
+                document.getElementsByClassName("modal-backdrop")[0];
+              if (modalBackdrop) {
+                modalBackdrop.parentNode.removeChild(modalBackdrop);
+              }
+            }
+          })
+          .catch(function (error) {
+            errorSchedule.value = error.response.data;
+          });
+      }
     } else {
       Swal.fire({
         position: "top-end",
@@ -473,7 +511,9 @@ const updateSchedule = async (id) => {
                     aria-label="Default select example"
                     v-model="idSubject">
                     <option value="" disabled>Chọn môn</option>
-                    <option :value="s.id" v-for="(s, index) in subjectByClassForSchedule">
+                    <option
+                      :value="s.id"
+                      v-for="(s, index) in subjectByClassForSchedule">
                       {{ s.subjectName }}
                     </option>
                   </select>
@@ -755,7 +795,7 @@ table {
   width: 100%;
 }
 .section-table {
-  max-height: calc(89% - 1.6rem);
+ 
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;

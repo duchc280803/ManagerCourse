@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import Swal from "sweetalert2";
@@ -13,7 +13,7 @@ const idParam = route.params.id;
  */
 const listSubject = ref([]);
 var pageNumber = 0;
-var pageSize = 8;
+var pageSize = 6;
 const getListSubjectName = async () => {
   axios
     .get(
@@ -137,7 +137,7 @@ const addCourse = async () => {
                 <th style="width: 100px">Loại môn</th>
                 <th>Nội dung</th>
                 <th style="width: 80px">Hình thức</th>
-                <th style="width: 150px">Thời gian</th>
+                <th style="width: 150px">Buổi học</th>
               </tr>
             </thead>
             <tbody>
@@ -172,7 +172,7 @@ const addCourse = async () => {
                 <td>{{ s.curriculumContent }}</td>
                 <td>{{ s.learningMode == 1 ? "Online" : "Offline" }}</td>
                 <td style="width: 120px">
-                  {{ s.studyTimeStart }} | {{ s.studyTimeEnd }}
+                  {{ s.numberOfSessions }}
                 </td>
               </tr>
             </tbody>
@@ -306,7 +306,6 @@ table {
   width: 100%;
 }
 .section-table {
-  max-height: calc(89% - 1.6rem);
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;

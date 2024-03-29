@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
@@ -110,6 +111,15 @@ public class ScheduleServiceImpl implements ScheduleService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<ScheduleResponse> scheduleResponses = scheduleRepository.findAllScheduleByCourse(id, pageable, username);
         return scheduleResponses.getContent();
+    }
+
+    @Override
+    public Boolean checkTimeSchedule(LocalTime timeStart, LocalTime timeEnd, Integer day, Integer id) {
+        List<Schedule> scheduleList = scheduleRepository.check(timeStart, timeEnd, day, id);
+        if (scheduleList.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     private Schedule createScheduleForDay(Class aClass, Subject subject, ClassRoom classRoom, ScheduleRequest scheduleRequest) {

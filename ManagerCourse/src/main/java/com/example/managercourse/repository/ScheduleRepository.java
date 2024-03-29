@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -56,4 +57,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     @Query("SELECT s FROM Schedule s JOIN s.aClass cl WHERE cl.id = :id")
     List<Schedule> findByAClassId(Integer id);
+
+    @Query("SELECT s FROM Schedule s JOIN s.aClass cl WHERE s.classRoom.id = :id AND s.day = :day AND ((s.startDate <= :timeStart AND s.endDate >= :timeStart) OR (s.startDate <= :timeEnd AND s.endDate >= :timeEnd) OR (s.startDate >= :timeStart AND s.endDate <= :timeEnd))")
+    List<Schedule> check(LocalTime timeStart, LocalTime timeEnd, Integer day, Integer id);
+
 }

@@ -107,12 +107,11 @@ fetchData();
           <thead>
             <tr style="background-color: #d5d1defe; text-align: center">
               <th>STT</th>
-              <th>Tên lớp</th>
               <th>Mã môn</th>
               <th>Tên Môn</th>
               <th>Giảng viên</th>
               <th>Hình thức</th>
-              <th>Thời gian</th>
+              <th>Số buổi</th>
               <th>Trạng thái</th>
             </tr>
           </thead>
@@ -121,12 +120,11 @@ fetchData();
               style="text-align: center"
               v-for="(l, index) in listCourseOfStudent">
               <td>{{ index + 1 }}</td>
-              <td>{{ l.className }}</td>
               <td>{{ l.subjectCode }}</td>
               <td>{{ l.subjectName }}</td>
               <td style="width: 100px">{{ l.teacherName }}</td>
               <td>{{ l.learningMode == 1 ? "Online" : "Offline" }}</td>
-              <td style="width: 130px">{{ l.startTime }} | {{ l.endTime }}</td>
+              <td>{{ l.numberOfSessions }}</td>
               <td style="width: 100px">
                 <span
                     :style="{

@@ -6,9 +6,11 @@ import "bootstrap"
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import 'jquery';
+import ToastPlugin from 'vue-toast-notification';
 const app = createApp(App)
 
 app.use(router)
 app.use(VueSweetalert2)
+app.use(ToastPlugin);
 
 app.mount('#app')

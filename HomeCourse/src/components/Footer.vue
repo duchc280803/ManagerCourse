@@ -103,4 +103,9 @@ footer {
 .site-map li a {
     color: #ffffff;
 }
+@media (max-width: 991.98px) {
+  .footer-widget {
+    margin-bottom: 30px;
+  }
+}
 </style>

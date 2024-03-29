@@ -22,6 +22,7 @@ import Register from "@/pages/Register.vue";
 import ScheduleOfTeacher from "@/pages/ScheduleOfTeacher.vue";
 import MarkPoint from "@/pages/MarkPoint.vue";
 import Send_mail from "@/pages/Send_mail.vue";
+import Contact from "@/pages/Contact.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -142,6 +143,11 @@ const router = createRouter({
       path: "/send-mail",
       name: "Send_mail",
       component: Send_mail
+    },
+    {
+      path: "/contact",
+      name: "Contact",
+      component: Contact
     },
   ],
 });

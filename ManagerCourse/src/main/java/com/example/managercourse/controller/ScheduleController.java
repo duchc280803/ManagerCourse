@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -60,6 +61,16 @@ public class ScheduleController {
             Principal principal
     ) {
         return new ResponseEntity<>(scheduleService.findAllScheduleByCourse(pageNumber, pageSize, id, principal.getName()), HttpStatus.OK);
+    }
+
+    @GetMapping("check-time")
+    public ResponseEntity<Boolean> findAllScheduleByCourse(
+            @RequestParam(name = "startTime") LocalTime startTime,
+            @RequestParam(name = "endTime") LocalTime endTime,
+            @RequestParam(name = "day") Integer day,
+            @RequestParam(name = "id") Integer id
+    ) {
+        return new ResponseEntity<>(scheduleService.checkTimeSchedule(startTime, endTime, day, id), HttpStatus.OK);
     }
 
 }
