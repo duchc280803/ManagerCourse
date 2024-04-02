@@ -83,7 +83,7 @@ watch(selectedClassName, () => {
           </div>
         </div>
         <div class="col-2"></div>
-        <div class="col-2" v-show="role === 'ADMIN'">
+        <div class="col-2" >
         </div>
       </div>
       <section class="section-table">

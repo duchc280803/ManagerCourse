@@ -22,8 +22,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
             "JOIN cl.scheduleList sc " +
             "JOIN sc.classRoom clr " +
             "JOIN sc.subject s " +
-            "JOIN cl.classDetailList cld " +
-            "JOIN cld.user u " +
+            "JOIN cl.userTeacher u " +
             "WHERE (:id IS NULL OR cl.id = :id) AND (:idSubject IS NULL OR s.id = :idSubject) AND (:username IS NULL OR u.username = :username)" +
             "ORDER BY sc.id ASC")
     Page<ScheduleResponse> findAllSchedule(@Param("id") Integer id, @Param("idSubject") Integer idSubject, Pageable pageable, @Param("username") String username);

@@ -28,7 +28,9 @@ public interface ClassService {
 
     List<ClassResponse> findAllClassName();
 
-    List<ClassResponse> findAllClassName(String username);
+    List<ClassResponse> findAllClassNameForStudent(String username);
+
+    List<ClassResponse> findAllClassNameForTeacher(String username);
 
     List<ClassResponse> findAllClassNameOfStudent(String username);
 

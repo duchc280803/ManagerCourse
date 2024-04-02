@@ -77,7 +77,6 @@ public class CourseServiceImpl implements CourseService {
                 .status(1)
                 .scheduled(courseRequest.getScheduled())
                 .build();
-
         courseRepository.save(course);
 
         courseRequest.getNameTeacher().forEach(username -> {

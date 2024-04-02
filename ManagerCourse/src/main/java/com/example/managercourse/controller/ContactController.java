@@ -26,11 +26,27 @@ public class ContactController {
         return new ResponseEntity<>(contactService.selectContact(pageNumber, pageSize), HttpStatus.OK);
     }
 
+    @GetMapping("find-contact")
+    public ResponseEntity<ContactResponse> findByContact(
+            @RequestParam(name = "id") Integer id
+    ) {
+        return new ResponseEntity<>(contactService.findByContact(id), HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<MessageResponse> createContact(
             @RequestBody ContactRequest contactRequest
     ) {
         return new ResponseEntity<>(contactService.createContact(contactRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping("convert")
+    public ResponseEntity<MessageResponse> convertStatusContact(
+            @RequestParam(name = "id") Integer id,
+            @RequestParam(name = "status") Integer status,
+            @RequestParam(name = "course", required = false) String course
+    ) {
+        return new ResponseEntity<>(contactService.convertStatusContact(id, status, course), HttpStatus.CREATED);
     }
 
 }

@@ -10,6 +10,7 @@ import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.StudentService;
 import com.example.managercourse.util.MapperUtil;
+import com.example.managercourse.util.UsernamePasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,13 +60,12 @@ public class StudentServiceImpl implements StudentService {
                 .codeName("HOC_VIEN_" + count)
                 .fullName(studentRequest.getFullName())
                 .gender(studentRequest.getGender())
-                .startDate(studentRequest.getStartDateLearn())
                 .yearOfBirth(studentRequest.getDateOfBirth())
                 .email(studentRequest.getEmail())
                 .address(studentRequest.getAddress())
                 .phoneNumber(studentRequest.getPhoneNumber())
-                .username(studentRequest.getUsername())
-                .password(passwordEncoder.encode(studentRequest.getPassword()))
+                .username(UsernamePasswordGenerator.generateUsername(studentRequest.getFullName()))
+                .password(passwordEncoder.encode(UsernamePasswordGenerator.generatePassword()))
                 .status(1)
                 .role(role)
                 .build();
@@ -128,7 +128,6 @@ public class StudentServiceImpl implements StudentService {
         user.setEmail(studentRequest.getEmail());
         user.setPhoneNumber(studentRequest.getPhoneNumber());
         user.setYearOfBirth(studentRequest.getDateOfBirth());
-        user.setStartDate(studentRequest.getStartDateLearn());
     }
 
     private void updateCourseDetail(User user, String courseName) {

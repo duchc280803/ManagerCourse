@@ -25,10 +25,6 @@ public class CourseRequest {
     @NotNull(message = "Course price is required")
     private BigDecimal coursePrice;
 
-    @NotNull(message = "Quantity of subjects is required")
-    @Min(value = 1, message = "Quantity of subjects must be at least 1")
-    private Integer quantitySubject;
-
     @NotBlank(message = "Description is required")
     private String description;
 

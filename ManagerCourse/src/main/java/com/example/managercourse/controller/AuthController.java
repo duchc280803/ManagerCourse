@@ -28,10 +28,10 @@ public class AuthController {
     @PostMapping("register")
     private ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         if (authService.findByUsername(registerRequest.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body(MessageResponse.builder().messageUsername("Username already exits").build());
+            return ResponseEntity.badRequest().body(MessageResponse.builder().message("Username already exits").build());
         }
         if (authService.findByEmail(registerRequest.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(MessageResponse.builder().messageEmail("Email already exits").build());
+            return ResponseEntity.badRequest().body(MessageResponse.builder().message("Email already exits").build());
         }
         return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.CREATED);
     }

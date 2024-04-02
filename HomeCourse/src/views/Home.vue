@@ -9,34 +9,21 @@
         <div class="section-title">
           <div class="row">
             <div class="col-lg-6">
-              <h3
-                class="set-elemment-item font-28 mt-md-30 mt-0"
-                style="
+              <h3 class="set-elemment-item font-28 mt-md-30 mt-0" style="
                   margin-bottom: 40px !important;
                   text-transform: uppercase;
                   color: #ff5421;
                   font-weight: bold;
                 ">
-                <span
-                  class="text-theme-colored2"
-                  style="
+                <span class="text-theme-colored2" style="
                     text-transform: uppercase;
                     font-weight: bold;
                     color: black;
-                  "
-                  >Tại sao lại chọn </span
-                >Chúng Tôi?
+                  ">Tại sao lại chọn </span>Chúng Tôi?
               </h3>
-              <div
-                class="line-bottom-item line-bottom-theme-colored2 d-none d-lg-block d-xl-block"></div>
-              <img
-                src="https://tuyendung.newwave.vn/images/Thumbnail.jpg"
-                width="525px"
-                class="img-fullwidth"
-                alt="" />
-              <p
-                class="mt-15"
-                style="
+              <div class="line-bottom-item line-bottom-theme-colored2 d-none d-lg-block d-xl-block"></div>
+              <img src="https://tuyendung.newwave.vn/images/Thumbnail.jpg" width="525px" class="img-fullwidth" alt="" />
+              <p class="mt-15" style="
                   margin-bottom: 10px !important;
                   text-align: justify;
                   margin-top: 28px;
@@ -62,35 +49,21 @@
               <div class="line-bottom-theme-colored2"></div>
               <div
                 class="panel-group accordion-stylished-left-border accordion-icon-filled accordion-no-border accordion-icon-left accordion-icon-filled-theme-colored2 custom-style"
-                id="accordion6"
-                role="tablist"
-                aria-multiselectable="true">
+                id="accordion6" role="tablist" aria-multiselectable="true">
                 <div class="accordion" id="accordionExample">
                   <div class="card">
-                    <div
-                      class="card-header"
-                      style="margin-bottom: 0 !important">
-                      <button
-                        class="btn btn-link waves-effect waves-light"
-                        data-toggle="collapse"
-                        data-target="#collapseOne"
-                        style="
+                    <div class="card-header" style="margin-bottom: 0 !important">
+                      <button class="btn btn-link waves-effect waves-light" data-toggle="collapse"
+                        data-target="#collapseOne" style="
                           color: #ff5421;
                           text-transform: uppercase;
                           font-weight: bold;
-                        "
-                        aria-expanded="true">
+                        " aria-expanded="true">
                         Cam kết công việc ngay sau khi tôt nghiệp
                       </button>
                     </div>
-                    <div
-                      class="collapse show"
-                      id="collapseOne"
-                      data-parent="#accordionExample"
-                      style="">
-                      <div
-                        class="card-body-item card-body"
-                        style="padding-left: 32px !important">
+                    <div class="collapse show" id="collapseOne" data-parent="#accordionExample" style="">
+                      <div class="card-body-item card-body" style="padding-left: 32px !important">
                         Chúng tôi cam kết giúp các học viên tìm được công việc
                         phù hợp với năng lực và chuyên môn ngay sau khi tốt
                         nghiệp chỉ sau 4-6 tháng học tập.
@@ -99,31 +72,19 @@
                   </div>
 
                   <div class="card">
-                    <div
-                      class="card-header"
-                      style="margin-bottom: 0 !important">
-                      <button
-                        class="btn btn-link waves-effect waves-light collapsed"
-                        data-toggle="collapse"
-                        data-target="#collapseTwo"
-                        style="
+                    <div class="card-header" style="margin-bottom: 0 !important">
+                      <button class="btn btn-link waves-effect waves-light collapsed" data-toggle="collapse"
+                        data-target="#collapseTwo" style="
                           color: #ff5421;
                           text-transform: uppercase;
                           font-weight: bold;
                           text-align: left !important;
-                        "
-                        aria-expanded="false">
+                        " aria-expanded="false">
                         Học 1:1 linh hoạt cùng giảng viên 5 năm kinh nghiệm
                       </button>
                     </div>
-                    <div
-                      class="collapse"
-                      id="collapseTwo"
-                      data-parent="#accordionExample"
-                      style="">
-                      <div
-                        class="card-body-item card-body"
-                        style="padding-left: 32px !important">
+                    <div class="collapse" id="collapseTwo" data-parent="#accordionExample" style="">
+                      <div class="card-body-item card-body" style="padding-left: 32px !important">
                         Khác với các mô hình đào tạo truyền thống hiện tại, Với
                         hình thức học 1:1 cùng các mentor 5 năm kinh nghiệm tại
                         Newave, các kiến thức &amp; kinh nghiệm sẽ được truyền
@@ -134,14 +95,9 @@
                   </div>
 
                   <div class="card">
-                    <div
-                      class="card-header"
-                      style="margin-bottom: 0 !important">
-                      <button
-                        class="btn btn-link waves-effect waves-light"
-                        data-toggle="collapse"
-                        data-target="#collapseThree"
-                        style="
+                    <div class="card-header" style="margin-bottom: 0 !important">
+                      <button class="btn btn-link waves-effect waves-light" data-toggle="collapse"
+                        data-target="#collapseThree" style="
                           color: #ff5421;
                           text-transform: uppercase;
                           font-weight: bold;
@@ -149,13 +105,8 @@
                         Mô hình đào tạo lập trình thực chiến
                       </button>
                     </div>
-                    <div
-                      class="collapse"
-                      id="collapseThree"
-                      data-parent="#accordionExample">
-                      <div
-                        class="card-body-item card-body"
-                        style="padding-left: 32px !important">
+                    <div class="collapse" id="collapseThree" data-parent="#accordionExample">
+                      <div class="card-body-item card-body" style="padding-left: 32px !important">
                         Với các giảng viên là các lập trình viên hiện đang công
                         tác trong những tập đoàn công nghệ, bài giảng được đúc
                         kết từ 16 năm kinh nghiệm giảng dạy của CEO Nguyễn Đồng
@@ -164,16 +115,10 @@
                       </div>
                     </div>
                   </div>
-
                   <div class="card">
-                    <div
-                      class="card-header"
-                      style="margin-bottom: 0 !important">
-                      <button
-                        class="btn btn-link waves-effect waves-light"
-                        data-toggle="collapse"
-                        data-target="#collapseFour"
-                        style="
+                    <div class="card-header" style="margin-bottom: 0 !important">
+                      <button class="btn btn-link waves-effect waves-light" data-toggle="collapse"
+                        data-target="#collapseFour" style="
                           color: #ff5421;
                           text-transform: uppercase;
                           font-weight: bold;
@@ -181,13 +126,8 @@
                         Hệ thống E-Learning độc quyền
                       </button>
                     </div>
-                    <div
-                      class="collapse"
-                      id="collapseFour"
-                      data-parent="#accordionExample">
-                      <div
-                        class="card-body-item card-body"
-                        style="padding-left: 32px !important">
+                    <div class="collapse" id="collapseFour" data-parent="#accordionExample">
+                      <div class="card-body-item card-body" style="padding-left: 32px !important">
                         Với hệ thống bài giảng trực tuyển E-Learning của LTS
                         Edu, các bạn có thể học kiến thức mọi lúc, mọi nơi, mọi
                         thời gian mong muốn.
@@ -200,35 +140,6 @@
           </div>
         </div>
       </div>
-
-      <div class="btn-more-item">
-        <button
-          href="#"
-          class="my-btn my-btn-style"
-          style="
-            margin-top: 32px;
-            padding: 8px 16px;
-            background-color: #ff5421;
-            color: white;
-            text-transform: uppercase;
-            border-radius: 5px;
-            border: none;
-          ">
-          Tìm hiểu thêm về sự khác biệt của chúng tôi
-        </button>
-      </div>
-      <!-- <script>
-        var button = document.querySelector(".my-btn");
-        function hideContent() {
-          var content = document.querySelector(".content-collaps-item");
-          if (content.style.display === "block") {
-            content.style.display = "none";
-          }
-        }
-        button.addEventListener("click", function () {
-          window.location.href = "https://lotusacademy.edu.vn/about-us";
-        });
-      </script> -->
     </section>
   </div>
   <div class="main-home">
@@ -237,13 +148,11 @@
         <div class="sub-title">Danh Mục</div>
         <h2 class="title black-color">Chương trình đào tạo</h2>
       </div>
-      <div class="row mb-35">
+      <div class="row justify-content-center mb-35">
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              style="height: 151px"
-              src="https://tse3.mm.bing.net/th?id=OIP.LpuVGhRLhptCkcPtiabL6QHaEx&pid=Api&P=0&h=220"
-              class="card-img-top"
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img style="height: 151px"
+              src="https://tse3.mm.bing.net/th?id=OIP.LpuVGhRLhptCkcPtiabL6QHaEx&pid=Api&P=0&h=220" class="card-img-top"
               alt="..." />
             <div class="card-body">
               <h5 class="card-title">Backend developer</h5>
@@ -255,11 +164,9 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              style="height: 151px"
-              src="https://plopdo.com/wp-content/uploads/2021/07/Screenshot-1-1210x642.png?crop=1"
-              class="card-img-top"
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img style="height: 151px"
+              src="https://plopdo.com/wp-content/uploads/2021/07/Screenshot-1-1210x642.png?crop=1" class="card-img-top"
               alt="..." />
             <div class="card-body">
               <h5 class="card-title">Frontend developer</h5>
@@ -271,11 +178,9 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              style="height: 151px"
-              src="https://www.computercareers.org/wp-content/uploads/Become-a-Software-Tester.png"
-              class="card-img-top"
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img style="height: 151px"
+              src="https://www.computercareers.org/wp-content/uploads/Become-a-Software-Tester.png" class="card-img-top"
               alt="..." />
             <div class="card-body">
               <h5 class="card-title">Tester</h5>
@@ -290,12 +195,9 @@
       <br />
       <div class="row mb-35">
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              style="height: 151px"
-              src="https://www.computercareers.org/wp-content/uploads/word-image-11707-5.jpg"
-              class="card-img-top"
-              alt="..." />
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img style="height: 151px" src="https://www.computercareers.org/wp-content/uploads/word-image-11707-5.jpg"
+              class="card-img-top" alt="..." />
             <div class="card-body">
               <h5 class="card-title">AI Enginear</h5>
               <p class="card-text">
@@ -306,12 +208,10 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              style="height: 151px"
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img style="height: 151px"
               src="https://static.wixstatic.com/media/b531dd_532c7736e379467f8ce47d1fd6e49d94~mv2.png/v1/fit/w_1000%2Ch_800%2Cal_c/file.png"
-              class="card-img-top"
-              alt="..." />
+              class="card-img-top" alt="..." />
             <div class="card-body">
               <h5 class="card-title">Data Enginear</h5>
               <p class="card-text">
@@ -322,12 +222,9 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem">
-            <img
-              src="https://www.simplilearn.com/ice9/free_resources_article_thumb/Data_Analyst_Job_Description.jpg"
-              class="card-img-top"
-              alt="..."
-              style="height: 151px" />
+          <div class="card" style="width: 18rem;margin-left: 55px;">
+            <img src="https://www.simplilearn.com/ice9/free_resources_article_thumb/Data_Analyst_Job_Description.jpg"
+              class="card-img-top" alt="..." style="height: 151px" />
             <div class="card-body">
               <h5 class="card-title">Data Analyst</h5>
               <p class="card-text">
@@ -347,12 +244,10 @@
       </div>
       <div class="row mb-35">
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              style="height: 151px"
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img style="height: 151px"
               src="https://assets-global.website-files.com/606a802fcaa89bc357508cad/611432b386bb6d5c574f91f3_1.png"
-              class="card-img-top"
-              alt="..." />
+              class="card-img-top" alt="..." />
             <div class="card-body">
               <h5 class="card-title">Backend developer</h5>
               <p class="card-text">
@@ -381,11 +276,7 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
               </div>
@@ -393,12 +284,10 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              style="height: 151px"
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img style="height: 151px"
               src="https://tuannguyen.tech/wp-content/uploads/2019/05/what-does-a-front-end-developer-do-career-insights-4940.jpg"
-              class="card-img-top"
-              alt="..." />
+              class="card-img-top" alt="..." />
             <div class="card-body">
               <h5 class="card-title">Frontend Developer</h5>
               <p class="card-text">
@@ -426,11 +315,7 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
               </div>
@@ -438,12 +323,9 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              src="https://tse1.mm.bing.net/th?id=OIP.v5yOgrGYbWmPJr58hzpEowAAAA&pid=Api&P=0&h=220"
-              class="card-img-top"
-              alt="..."
-              style="height: 151px" />
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img src="https://tse1.mm.bing.net/th?id=OIP.v5yOgrGYbWmPJr58hzpEowAAAA&pid=Api&P=0&h=220"
+              class="card-img-top" alt="..." style="height: 151px" />
             <div class="card-body">
               <h5 class="card-title">Fullstack Developer</h5>
               <p class="card-text">
@@ -472,11 +354,7 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
               </div>
@@ -487,12 +365,10 @@
       <br />
       <div class="row mb-35">
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              style="height: 151px"
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img style="height: 151px"
               src="https://www.devteam.space/wp-content/uploads/2018/07/Why-Should-You-Use-Java-for-Your-Backend-Infrastructure-1024x620.png"
-              class="card-img-top"
-              alt="..." />
+              class="card-img-top" alt="..." />
             <div class="card-body">
               <h5 class="card-title">Backend Java</h5>
               <p class="card-text">
@@ -520,11 +396,7 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
               </div>
@@ -532,11 +404,8 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              style="height: 151px"
-              src="https://i.ytimg.com/vi/MtPgfLNFb9c/maxresdefault.jpg"
-              class="card-img-top"
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img style="height: 151px" src="https://i.ytimg.com/vi/MtPgfLNFb9c/maxresdefault.jpg" class="card-img-top"
               alt="..." />
             <div class="card-body">
               <h5 class="card-title">Lập trình C# Winform</h5>
@@ -565,11 +434,7 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
               </div>
@@ -577,12 +442,9 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 mb-30 wow" style="visibility: visible">
-          <div class="card" style="width: 18rem; height: 703px">
-            <img
-              src="https://hocvienagile.com/wp-content/uploads/2021/07/lap-trinh-game-hoc-nganh-nao3.jpg"
-              class="card-img-top"
-              alt="..."
-              style="height: 151px" />
+          <div class="card" style="width: 18rem;margin-left: 55px;; height: 703px">
+            <img src="https://hocvienagile.com/wp-content/uploads/2021/07/lap-trinh-game-hoc-nganh-nao3.jpg"
+              class="card-img-top" alt="..." style="height: 151px" />
             <div class="card-body">
               <h5 class="card-title">
                 Cấu trúc dữ liệu và giải thuật lập trình hướng đối tượng C# .Net
@@ -612,49 +474,9 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a
-                  target="_blank"
-                  href=""
-                  data-toggle="modal"
-                  data-target="#contactModal">
+                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
                   Liên hệ ngay
                 </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="rs-cta main-home">
-        <div class="partition-bg-wrap">
-          <div class="container">
-            <div class="row">
-              <div class="offset-lg-6"></div>
-              <div class="col-lg-6 pl-70 md-pl-15">
-                <div class="sec-title3 mb-40 wow" style="visibility: visible">
-                  <h2 class="title white-color mb-16">
-                    Chương trình đào tạo lập trình viên chuyên nghiệp
-                  </h2>
-                  <div class="desc white-color pr-100 md-pr-0">
-                    “Chương trình đào tạo lập trình viên Web Backend, Frontend
-                    và Fullstack” được thiết kế sao cho phù hợp với đối tượng
-                    người học là học sinh tốt nghiệp cấp 3, sinh viên cao đẳng
-                    hoặc đại học và thậm chí cả người đi làm chưa biết IT, kết
-                    quả cuối cùng đầu ra đủ năng lực để xin việc và đi làm ở các
-                    doanh nghiệp IT Outsourcing.
-                  </div>
-                </div>
-                <div class="btn-part wow" style="visibility: visible">
-                  <a
-                    style="width: 125px;
-    margin-left: 400px;"
-                    class="readon orange-btn transparent"
-                    target="_blank"
-                    href=""
-                    data-toggle="modal"
-                    data-target="#contactModal"
-                    >Liên hệ ngay</a
-                  >
-                </div>
               </div>
             </div>
           </div>
@@ -673,12 +495,14 @@
   text-transform: uppercase;
   margin-bottom: 10px;
 }
+
 .sec-title3 .title {
   font-size: 36px;
   line-height: 46px;
   font-weight: 800;
   color: #031a3d;
 }
+
 .meta-part {
   display: flex;
   flex-direction: column;
@@ -687,12 +511,14 @@
   font-size: 16px;
   border-top: 1px solid;
 }
+
 .meta-part .user {
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
   color: #363636;
 }
+
 .btn-part a {
   margin-top: 16px;
   width: 100%;
@@ -707,65 +533,27 @@
   overflow: hidden;
   text-align: center;
 }
+
 .rs-cta.main-home .partition-bg-wrap {
   background: none !important;
   position: relative;
   padding: 130px 0;
 }
-@media only screen and (min-width: 1440px) {
-  .container {
-    max-width: 1270px;
-    width: 100%;
-  }
-}
-/* Các quy tắc CSS cho thiết bị có độ rộng màn hình từ 768px trở lên */
-@media only screen and (min-width: 768px) {
-  .img-banner {
-    padding-top: 140px; /* Điều chỉnh vị trí của banner hình ảnh trên thiết bị lớn hơn */
-  }
-  .sec-title3 {
-    margin-bottom: 60px; /* Tăng khoảng cách giữa tiêu đề "Danh Mục" và danh sách các mục */
-  }
+
+.pl-70 {
+  padding-left: 70px;
 }
 
-/* Các quy tắc CSS cho thiết bị có độ rộng màn hình nhỏ hơn hoặc bằng 768px */
-@media only screen and (max-width: 768px) {
-  .img-banner {
-    padding-top: 80px; /* Điều chỉnh vị trí của banner hình ảnh trên thiết bị nhỏ hơn */
-  }
-  .sec-title3 {
-    margin-bottom: 40px; /* Giảm khoảng cách giữa tiêu đề "Danh Mục" và danh sách các mục */
-  }
-  .card {
-    width: 100%; /* Hiển thị các card trên thiết bị di động theo chiều dọc */
-    margin-bottom: 30px; /* Tăng khoảng cách giữa các card trên thiết bị di động */
-  }
-  .card-body {
-    padding: 20px; /* Tăng khoảng cách giữa nội dung trong card trên thiết bị di động */
-  }
-}
-@media (min-width: 992px) {
-  .offset-lg-6 {
-    margin-left: 50%;
-  }
-}
-.pl-70 {
-    padding-left: 70px;
-}
 .btn-more-item {
   margin-left: 355px;
   margin-bottom: 50px;
 }
+
 .sec-title3 .title {
-    font-size: 36px;
-    line-height: 46px;
-    font-weight: 800;
-    color: #031a3d;
+  font-size: 36px;
+  line-height: 46px;
+  font-weight: 800;
+  color: #031a3d;
 }
-.rs-cta.main-home {
-    background: url(https://tuyendung.newwave.vn/images/Thumbnail.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin-top: 40px
-}
+
 </style>

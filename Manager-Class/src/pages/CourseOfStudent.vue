@@ -3,7 +3,6 @@ import { ref, watch } from "vue";
 import axios from "axios";
 
 const token = window.localStorage.getItem("token");
-console.log(token);
 const listCourseNames = ref([]);
 const selectedCourse = ref(null);
 const listCourseOfStudent = ref([]);
@@ -36,7 +35,7 @@ const fetchCourseData = async () => {
     };
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/student/course-of-student?courseName=${selectedCourse.value.courseName}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+        `http://localhost:8080/api/v1/student/course-of-student?courseName=${selectedCourse.value}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
         config
       );
       listCourseOfStudent.value = response.data;
@@ -91,7 +90,7 @@ fetchData();
             <option
               v-for="(cs, index) in listCourseNames"
               :key="index"
-              :value="cs">
+              :value="cs.courseName">
               {{ cs.courseName }}
             </option>
           </select>
@@ -109,7 +108,6 @@ fetchData();
               <th>STT</th>
               <th>Mã môn</th>
               <th>Tên Môn</th>
-              <th>Giảng viên</th>
               <th>Hình thức</th>
               <th>Số buổi</th>
               <th>Trạng thái</th>
@@ -122,7 +120,6 @@ fetchData();
               <td>{{ index + 1 }}</td>
               <td>{{ l.subjectCode }}</td>
               <td>{{ l.subjectName }}</td>
-              <td style="width: 100px">{{ l.teacherName }}</td>
               <td>{{ l.learningMode == 1 ? "Online" : "Offline" }}</td>
               <td>{{ l.numberOfSessions }}</td>
               <td style="width: 100px">

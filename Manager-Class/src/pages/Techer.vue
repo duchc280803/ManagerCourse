@@ -227,13 +227,11 @@ const updateTeacher = async (id) => {
                 <th>STT</th>
                 <th>Mã giảng viên</th>
                 <th>Họ tên</th>
-                <th>Giới tính</th>
                 <th>Số khóa</th>
                 <th>Số điện thoại</th>
                 <th>Email</th>
-                <th>Địa chỉ</th>
-                <th style="width: 120px">Trạng thái</th>
-                <th style="width: 100px">Hành động</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -244,13 +242,11 @@ const updateTeacher = async (id) => {
                 <td>{{ index + 1 + pageNumber * pageSize }}</td>
                 <td>{{ t.codeName }}</td>
                 <td>{{ t.fullName }}</td>
-                <td>{{ t.gender == 1 ? "Nam" : "Nữ" }}</td>
                 <td>
                   {{ t.courseOfClassList.length }}
                 </td>
                 <td>{{ t.phoneNumber }}</td>
                 <td>{{ t.email }}</td>
-                <td>{{ t.address }}</td>
                 <td>
                   <span
                     :style="{
@@ -258,14 +254,14 @@ const updateTeacher = async (id) => {
                       'border-radius': '5px',
                       color: t.status == 1 ? 'darkgreen' : 'white',
                     }">
-                    {{ t.status == 1 ? "Đang hoạt động" : "Ngừng hoạt động" }}
+                    {{ t.status == 1 ? "Hoạt động" : "Ngừng hoạt động" }}
                   </span>
                 </td>
                 <td>
                   <button
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal1"
-                    @click="showDetetailTeacher(cs.id)"
+                    @click="showDetetailTeacher(t.id)"
                     style="
                       text-decoration: none;
                       background-color: #fc6736;

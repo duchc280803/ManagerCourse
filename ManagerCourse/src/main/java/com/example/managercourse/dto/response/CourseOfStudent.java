@@ -13,8 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CourseOfStudent {
 
-    private String className;
-
     private String subjectCode;
 
     private String subjectName;

@@ -60,6 +60,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<ClassDetail> classDetailList;
 
+    @OneToMany(mappedBy = "userTeacher", fetch = FetchType.LAZY)
+    private List<Class> classList;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Point> pointList;
 

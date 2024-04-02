@@ -190,7 +190,6 @@ const updateclassRoom = async (id) => {
     class="card"
     style="
       width: 1192px;
-      height: 585px;
       margin-left: 30px;
       border-radius: 10px;
       margin-bottom: 30px;
@@ -262,13 +261,13 @@ const updateclassRoom = async (id) => {
                 text-align: center;
               ">
               <th>STT</th>
-              <th>Mã phòng</th>
-              <th style="width: 100px">Tên phòng</th>
-              <th style="width: 100px">Loại phòng học</th>
-              <th style="width: 100px">Số lượng người</th>
+              <th style="width: 0px;">Mã phòng</th>
+              <th>Tên phòng</th>
+              <th>Loại phòng học</th>
+              <th>Số lượng người</th>
               <th>Tầng</th>
-              <th style="width: 100px">Trạng thái</th>
-              <th style="width: 100px">Hành động</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>

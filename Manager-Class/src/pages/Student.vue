@@ -46,9 +46,8 @@ const searchStudent = async () => {
     });
 };
 watch(search, () => {
-  searchStudent();
+    searchStudent();
 });
-
 /**
  * Get name course
  */
@@ -67,7 +66,6 @@ findByCourseName();
  */
 const fullName = ref("");
 const gender = ref("");
-const age = ref("");
 const dateOfBirth = ref("");
 const phoneNumber = ref("");
 const address = ref("");
@@ -76,77 +74,62 @@ const courseName = ref("");
 const startDateLearn = ref("");
 const username = ref("");
 const password = ref("");
-const errorStudentCreated = ref({});
+const error = ref({});
+
+const resetForm = () => {
+  fullName.value = "";
+  gender.value = "";
+  dateOfBirth.value = "";
+  phoneNumber.value = "";
+  address.value = "";
+  email.value = "";
+  courseName.value = "";
+  startDateLearn.value = "";
+  username.value = "";
+  password.value = "";
+  error.value = {};
+};
 const createStudent = async () => {
-  Swal.fire({
-    title: "Bạn có muốn thêm mới học viên không?",
-    text: "",
-    icon: "question",
-    showCancelButton: true,
-    cancelButtonText: "Hủy bỏ", // Thay đổi từ "Cancel" thành "Hủy bỏ"
-    cancelButtonColor: "#d33",
-    confirmButtonColor: "#3085d6",
-    confirmButtonText: "Xác nhận", // Thay đổi từ "Yes" thành "Có"
-    reverseButtons: true,
-  }).then((result) => {
-    if (result.value) {
-      const newStudent = {
-        fullName: fullName.value,
-        gender: gender.value,
-        age: age.value,
-        dateOfBirth: dateOfBirth.value,
-        phoneNumber: phoneNumber.value,
-        address: address.value,
-        email: email.value,
-        courseName: courseName.value,
-        startDateLearn: startDateLearn.value,
-        username: username.value,
-        password: password.value,
-      };
-      axios
-        .post(`http://localhost:8080/api/v1/student/create`, newStudent)
-        .then(function (response) {
-          listStudent.value.push(response.data);
-          fetchStudentData();
-          fullName = "";
-          gender = "";
-          age = "";
-          dateOfBirth = "";
-          phoneNumber = "";
-          email = "";
-          address = "";
-          courseName = "";
-          startDateLearn = "";
-          let modal = document.getElementById("student-add");
-          if (modal) {
-            modal.classList.remove("show");
-            modal.setAttribute("aria-hidden", "true");
-            modal.style.display = "none";
-            let modalBackdrop =
-              document.getElementsByClassName("modal-backdrop")[0];
-            if (modalBackdrop) {
-              modalBackdrop.parentNode.removeChild(modalBackdrop);
-            }
-          }
-        })
-        .catch(function (error) {
-          errorStudentCreated.value = error.response.data;
-        });
-    } else {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Hủy bỏ thành công",
-        timer: 1500,
-        width: "400px",
-        height: "300px",
-        customClass: {
-          popup: "small-popup", // Thêm class cho message
-        },
-        showConfirmButton: false, // Ẩn nút "OK"
-      });
+  try {
+    const newStudent = {
+      fullName: fullName.value,
+      gender: gender.value,
+      dateOfBirth: dateOfBirth.value,
+      phoneNumber: phoneNumber.value,
+      address: address.value,
+      email: email.value,
+      courseName: courseName.value,
+      startDateLearn: startDateLearn.value,
+      username: username.value,
+      password: password.value,
+    };
+    const response = await axios.post(`http://localhost:8080/api/v1/student/create`, newStudent);
+    listStudent.value.push(response.data);
+    fetchStudentData();
+    resetForm(); // Reset form data and error messages after successful create operation
+    closeModal("#student-add"); // Close modal
+    // Show success message
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Học viên đã được thêm mới thành công",
+      timer: 1500,
+      showConfirmButton: false
+    });
+  } catch (error) {
+    // Set error messages to display in UI
+    error.value = error.response.data;
+  }
+};
+
+const closeModal = (modalId) => {
+    const modal = document.querySelector(modalId);
+    const backdrop = document.querySelector(".modal-backdrop");
+    if (modal && backdrop) {
+        modal.classList.remove("show");
+        modal.style.display = "none";
+        backdrop.remove();
     }
-  });
 };
 
 /**
@@ -192,17 +175,7 @@ const updateStudent = async (id) => {
           studentUpdate.value
         );
         fetchStudentData();
-        let modal = document.getElementById("student-update");
-        if (modal) {
-          modal.classList.remove("show");
-          modal.setAttribute("aria-hidden", "true");
-          modal.style.display = "none";
-          let modalBackdrop =
-            document.getElementsByClassName("modal-backdrop")[0];
-          if (modalBackdrop) {
-            modalBackdrop.parentNode.removeChild(modalBackdrop);
-          }
-        }
+        closeModal("#student-update"); // Close modal
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -253,9 +226,7 @@ const updateStudent = async (id) => {
             </div>
           </div>
           <div class="col-lg-4">
-            <button
-              @click="refresh()"
-              style="
+            <button @click="refresh()" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
@@ -269,10 +240,7 @@ const updateStudent = async (id) => {
           </div>
           <div class="col-2"></div>
           <div class="col-2">
-            <button
-              data-bs-toggle="modal"
-              data-bs-target="#student-add"
-              style="
+            <button data-bs-toggle="modal" data-bs-target="#student-add" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
@@ -287,8 +255,7 @@ const updateStudent = async (id) => {
         <section class="section-table">
           <table>
             <thead>
-              <tr
-                style="
+              <tr style="
                   background-color: #d5d1defe;
                   height: 52px;
                   text-align: center;
@@ -296,46 +263,32 @@ const updateStudent = async (id) => {
                 <th style="width: 30px">STT</th>
                 <th>Mã học viên</th>
                 <th>Họ tên</th>
-                <th>Giới tính</th>
                 <th>Khóa học</th>
-                <th style="width: 70px">Ngày vào học</th>
                 <th>Số điện thoại</th>
                 <th>Email</th>
-                <th style="width: 90px">Trạng thái</th>
-                <th style="width: 80px">Hành động</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(s, index) in listStudent"
-                :key="s.id"
-                style="text-align: center">
+              <tr v-for="(s, index) in listStudent" :key="s.id" style="text-align: center">
                 <td style="text-align: center">
                   {{ index + 1 + pageNumber * pageSize }}
                 </td>
                 <td>{{ s.codeName }}</td>
                 <td>{{ s.fullName }}</td>
-                <td>{{ s.gender == 1 ? "Nam" : "Nữ" }}</td>
                 <td>{{ s.courseName }}</td>
-                <td>{{ s.startDate }}</td>
                 <td>{{ s.phoneNumber }}</td>
                 <td>{{ s.email }}</td>
                 <td>
-                  <span
-                    style="
+                  <span style="
                       background-color: #9bcf53;
                       border-radius: 5px;
                       color: darkgreen;
-                    "
-                    >{{ s.status == 1 ? "Đang học" : "Nghỉ học" }}</span
-                  >
+                    ">{{ s.status == 1 ? "Đang học" : "Nghỉ học" }}</span>
                 </td>
                 <td>
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#student-update"
-                    @click="studentDetail(s.id)"
-                    style="
+                  <button data-bs-toggle="modal" data-bs-target="#student-update" @click="studentDetail(s.id)" style="
                       text-decoration: none;
                       background-color: #fc6736;
                       border-radius: 5px;
@@ -368,27 +321,17 @@ const updateStudent = async (id) => {
     </div>
   </div>
   <!-- Modal add-->
-  <div
-    class="modal fade"
-    id="student-add"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="student-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg">
         <div class="modal-header">
           <h5 class="modal-title">Thêm mới học viên</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Họ và tên
@@ -397,15 +340,11 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Họ và tên..."
-                    v-model="fullName" />
+                  <input type="text" class="form-control an-select" placeholder="Họ và tên..." v-model="fullName" />
                 </div>
                 <span style="color: red">{{
-                  errorStudentCreated.fullName
-                }}</span>
+                error.fullName
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -416,16 +355,13 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="gender">
+                  <select class="form-select" aria-label="Default select example" v-model="gender">
                     <option value="" disabled>Chọn giới tính</option>
                     <option :value="true">Nam</option>
                     <option :value="false">Nữ</option>
                   </select>
                 </div>
-                <span style="color: red">{{ errorStudentCreated.gender }}</span>
+                <span style="color: red">{{ error.gender }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -436,14 +372,11 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="dateOfBirth" />
+                  <input type="date" class="form-control an-select" v-model="dateOfBirth" />
                 </div>
                 <span style="color: red">{{
-                  errorStudentCreated.dateOfBirth
-                }}</span>
+                error.dateOfBirth
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -454,22 +387,16 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="courseName">
+                  <select class="form-select" aria-label="Default select example" v-model="courseName">
                     <option disabled value="">Khóa học</option>
-                    <option
-                      v-for="(cs, index) in getListCourseName"
-                      :key="cs"
-                      :value="cs.courseName">
+                    <option v-for="(cs, index) in getListCourseName" :key="cs" :value="cs.courseName">
                       {{ cs.courseName }}
                     </option>
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorStudentCreated.courseName
-                }}</span>
+                error.courseName
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -480,15 +407,11 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Địa chỉ..."
-                    v-model="address" />
+                  <input type="text" class="form-control an-select" placeholder="Địa chỉ..." v-model="address" />
                 </div>
                 <span style="color: red">{{
-                  errorStudentCreated.address
-                }}</span>
+                error.address
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -499,15 +422,12 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Số điện thoại..."
+                  <input type="text" class="form-control an-select" placeholder="Số điện thoại..."
                     v-model="phoneNumber" />
                 </div>
                 <span style="color: red">{{
-                  errorStudentCreated.phoneNumber
-                }}</span>
+                error.phoneNumber
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -518,88 +438,21 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Email..."
-                    v-model="email" />
+                  <input type="text" class="form-control an-select" placeholder="Email..." v-model="email" />
                 </div>
-                <span style="color: red">{{ errorStudentCreated.email }}</span>
+                <span style="color: red">{{ error.email }}</span>
                 <span style="color: red">{{
-                  errorStudentCreated.messageEmail
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Ngày vào học
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="startDateLearn" />
-                </div>
-                <span style="color: red">{{
-                  errorStudentCreated.startDateLearn
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Username
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    v-model="username"
-                    placeholder="Username..." />
-                </div>
-                <span style="color: red">{{
-                  errorStudentCreated.username
-                }}</span>
-              </div>
-              <span style="color: red">{{ errorStudentCreated.username }}</span>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Password
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="password"
-                    class="form-control an-select"
-                    v-model="password"
-                    placeholder="Password..." />
-                </div>
-                <span style="color: red">{{
-                  errorStudentCreated.password
-                }}</span>
+                error.messageEmail
+              }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="createStudent()">
+          <button type="button" class="btn btn-primary" @click="createStudent()">
             Lưu
           </button>
         </div>
@@ -607,27 +460,17 @@ const updateStudent = async (id) => {
     </div>
   </div>
   <!-- Modal update-->
-  <div
-    class="modal fade"
-    id="student-update"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="student-update" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg">
         <div class="modal-header">
           <h5 class="modal-title">Cập nhập học viên</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Họ và tên
@@ -636,15 +479,12 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Họ và tên..."
+                  <input type="text" class="form-control an-select" placeholder="Họ và tên..."
                     v-model="studentUpdate.fullName" />
                 </div>
                 <span style="color: red">{{
-                  errorUpdateStudent.fullName
-                }}</span>
+                errorUpdateStudent.fullName
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -655,10 +495,7 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="studentUpdate.gender">
+                  <select class="form-select" aria-label="Default select example" v-model="studentUpdate.gender">
                     <option value="" disabled>Chọn giới tính</option>
                     <option :value="true">Nam</option>
                     <option :value="false">Nữ</option>
@@ -675,14 +512,11 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="studentUpdate.yearOfBirth" />
+                  <input type="date" class="form-control an-select" v-model="studentUpdate.yearOfBirth" />
                 </div>
                 <span style="color: red">{{
-                  errorUpdateStudent.dateOfBirth
-                }}</span>
+                errorUpdateStudent.dateOfBirth
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -693,22 +527,16 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="studentUpdate.courseName">
+                  <select class="form-select" aria-label="Default select example" v-model="studentUpdate.courseName">
                     <option disabled value="">Khóa học</option>
-                    <option
-                      v-for="(cs, index) in getListCourseName"
-                      :key="cs"
-                      :value="cs.courseName">
+                    <option v-for="(cs, index) in getListCourseName" :key="cs" :value="cs.courseName">
                       {{ cs.courseName }}
                     </option>
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorUpdateStudent.courseName
-                }}</span>
+                errorUpdateStudent.courseName
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -719,10 +547,7 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Địa chỉ..."
+                  <input type="text" class="form-control an-select" placeholder="Địa chỉ..."
                     v-model="studentUpdate.address" />
                 </div>
                 <span style="color: red">{{ errorUpdateStudent.address }}</span>
@@ -736,15 +561,12 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Số điện thoại..."
+                  <input type="text" class="form-control an-select" placeholder="Số điện thoại..."
                     v-model="studentUpdate.phoneNumber" />
                 </div>
                 <span style="color: red">{{
-                  errorUpdateStudent.phoneNumber
-                }}</span>
+                errorUpdateStudent.phoneNumber
+              }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -755,46 +577,19 @@ const updateStudent = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Email..."
+                  <input type="text" class="form-control an-select" placeholder="Email..."
                     v-model="studentUpdate.email" />
                 </div>
-                <span style="color: red">{{ errorStudentCreated.email }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Ngày vào học
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="studentUpdate.startDate" />
-                </div>
-                <span style="color: red">{{
-                  errorUpdateStudent.startDateLearn
-                }}</span>
+                <span style="color: red">{{ error.email }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="updateStudent(studentUpdate.id)">
+          <button type="button" class="btn btn-primary" @click="updateStudent(studentUpdate.id)">
             Lưu
           </button>
         </div>
@@ -803,11 +598,8 @@ const updateStudent = async (id) => {
   </div>
 </template>
 <style scoped>
-* {
-  font-family: BaiJamjuree !important;
-}
 .section-table {
- 
+
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;
@@ -868,15 +660,21 @@ table {
 .pap {
   padding-top: 20px;
 }
+
 td {
   padding-left: 5px;
   width: 50px;
   height: 50px;
-  background-color: #f0f0f0; /* Màu nền của ô */
-  border: 1px solid #ccc; /* Đường viền */
-  border-radius: 10px; /* Góc bo */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+  background-color: #f0f0f0;
+  /* Màu nền của ô */
+  border: 1px solid #ccc;
+  /* Đường viền */
+  border-radius: 10px;
+  /* Góc bo */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* Đổ bóng */
 }
+
 tr {
   height: 54px;
 }

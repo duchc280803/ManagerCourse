@@ -89,7 +89,7 @@ public class ClassController {
         if (principal == null || principal.getName().equals("admin")) {
             return new ResponseEntity<>(classService.findAllClassName(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(classService.findAllClassName(principal.getName()), HttpStatus.OK);
+        return new ResponseEntity<>(classService.findAllClassNameForTeacher(principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("findAllClassNameOfStudent")

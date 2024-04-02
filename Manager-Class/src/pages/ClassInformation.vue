@@ -224,7 +224,7 @@ const selectPointForStudents = async (id) => {
                     ">
                     <th>STT</th>
                     <th>Tên môn</th>
-                    <th style="width: 110px">Thời gian</th>
+                    <th>Số buổi</th>
                     <th style="width: 100px">Loại môn</th>
                   </tr>
                 </thead>
@@ -234,7 +234,7 @@ const selectPointForStudents = async (id) => {
                     style="text-align: center">
                     <td>{{ index + 1 + pageNumber * pageSize }}</td>
                     <td>{{ s.subjectName }}</td>
-                    <td>{{ s.studyTimeStart }} | {{ s.studyTimeEnd }}</td>
+                    <td>{{ s.numberOfSessions }}</td>
                     <td>
                       <span
                         :style="{

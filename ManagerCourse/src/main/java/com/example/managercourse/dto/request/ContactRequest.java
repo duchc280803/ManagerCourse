@@ -17,7 +17,7 @@ public class ContactRequest {
 
     private String email;
 
-    private String phoneName;
+    private String phoneNumber;
 
     private String message;
 }

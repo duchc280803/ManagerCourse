@@ -66,8 +66,8 @@ const courseCode = ref("COURSE" + new Date().getTime());
 const courseName = ref("");
 const courseTime = ref("");
 const coursePrice = ref("");
-const quantitySubject = ref("");
 const description = ref("");
+const scheduled = ref("");
 const status = ref(1);
 const errorCourseCreate = ref({});
 const createCourse = async () => {
@@ -88,8 +88,8 @@ const createCourse = async () => {
         courseName: courseName.value,
         courseTime: courseTime.value,
         coursePrice: coursePrice.value,
-        quantitySubject: quantitySubject.value,
         description: description.value,
+        scheduled: scheduled.value,
         nameTeacher: nameTeacher.value,
         status: status.value,
       };
@@ -292,7 +292,7 @@ const updateTeacher = async (id) => {
                 <th>Tên khóa học</th>
                 <th style="width: 130px">Giảng viên</th>
                 <th>Dự kiến</th>
-                <th>Số môn</th>
+                <!-- <th>Số môn</th> -->
                 <th>Giá khóa</th>
                 <th style="width: 100px">Trạng thái</th>
                 <th style="width: 100px">Hành động</th>
@@ -317,7 +317,7 @@ const updateTeacher = async (id) => {
                   </select>
                 </td>
                 <td>{{ cs.scheduled }}</td>
-                <td>{{ cs.quantitySubject }}</td>
+                <!-- <td>{{ cs.quantitySubject }}</td> -->
                 <td>{{ cs.coursePrice.toLocaleString('vi-VN') }}đ</td>
                 <td>
                   <span
@@ -475,25 +475,6 @@ const updateTeacher = async (id) => {
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
                 <div>
-                  Số lượng môn
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="number"
-                    class="form-control an-select"
-                    placeholder="Số lượng môn..."
-                    v-model="quantitySubject" />
-                </div>
-                <span style="color: red">{{
-                  errorCourseCreate.quantitySubject
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
                   Dự kiến
                   <span class="text-danger ng-star-inserted">*</span>
                 </div>
@@ -504,7 +485,7 @@ const updateTeacher = async (id) => {
                     type="text"
                     class="form-control an-select"
                     placeholder="Dự kiến..."
-                    v-model="detailCourse.scheduled" />
+                    v-model="scheduled" />
                 </div>
                 <span style="color: red">{{
                   errorupdateTeacher.scheduled
@@ -655,25 +636,6 @@ const updateTeacher = async (id) => {
                 </div>
                 <span style="color: red">{{
                   errorupdateTeacher.nameTeacher
-                }}</span>
-              </div>
-              <div class="pap"></div>
-              <div class="col-4 ctrl_label">
-                <div>
-                  Số lượng môn
-                  <span class="text-danger ng-star-inserted">*</span>
-                </div>
-              </div>
-              <div class="col-7">
-                <div>
-                  <input
-                    type="number"
-                    class="form-control an-select"
-                    placeholder="Số lượng môn..."
-                    v-model="detailCourse.quantitySubject" />
-                </div>
-                <span style="color: red">{{
-                  errorupdateTeacher.quantitySubject
                 }}</span>
               </div>
               <div class="pap"></div>

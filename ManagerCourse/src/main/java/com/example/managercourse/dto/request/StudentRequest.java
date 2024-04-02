@@ -39,13 +39,4 @@ public class StudentRequest {
     @Pattern(regexp = ".+@.+\\..+", message = "Invalid email format")
     private String email;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @NotNull(message = "Start date of learning is required")
-    private LocalDate startDateLearn;
-
-    @NotBlank(message = "Username is required")
-    private String username;
-
-    @NotBlank(message = "Password is required")
-    private String password;
 }

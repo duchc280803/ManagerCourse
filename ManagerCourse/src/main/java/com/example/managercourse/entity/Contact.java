@@ -24,5 +24,5 @@ public class Contact {
 
     private String message;
 
-    private String status;
+    private Integer status;
 }

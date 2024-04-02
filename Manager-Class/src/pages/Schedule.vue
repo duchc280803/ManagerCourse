@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 var role = window.localStorage.getItem("role");
 const token = window.localStorage.getItem("token");
+console.log(token);
 const config = {
   headers: {
     Authorization: "Bearer " + token,
@@ -318,7 +319,6 @@ const updateSchedule = async (id) => {
     style="
       width: 1192px;
       margin-left: 30px;
-      height: 605px;
       border-radius: 10px;
       margin-bottom: 30px;
     ">

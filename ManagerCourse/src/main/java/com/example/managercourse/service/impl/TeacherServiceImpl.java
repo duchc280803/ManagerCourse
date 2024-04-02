@@ -11,8 +11,7 @@ import com.example.managercourse.repository.CourseRepository;
 import com.example.managercourse.repository.RoleRepository;
 import com.example.managercourse.repository.UserRepository;
 import com.example.managercourse.service.TeacherService;
-import com.example.managercourse.util.GenerateUsernameUtil;
-import com.example.managercourse.util.MapperUtil;
+import com.example.managercourse.util.UsernamePasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +78,6 @@ public class TeacherServiceImpl implements TeacherService {
                 return MessageResponse.builder().message("Không tìm thấy role").build();
             }
             Integer count = userRepository.countUserByRole_Role("TEACHER");
-            String username = GenerateUsernameUtil.generateUsername(teacherRequest.getFullName());
             User user = User.builder()
                     .fullName(teacherRequest.getFullName())
                     .codeName("TEACHER_" + count)
@@ -90,9 +87,9 @@ public class TeacherServiceImpl implements TeacherService {
                     .address(teacherRequest.getAddress())
                     .email(teacherRequest.getEmail())
                     .yearOfBirth(teacherRequest.getDateOfBirth())
-                    .username(username + userList.size() + 1)
                     .status(1)
-                    .password(passwordEncoder.encode(username))
+                    .username(UsernamePasswordGenerator.generateUsername(teacherRequest.getFullName()))
+                    .password(passwordEncoder.encode(UsernamePasswordGenerator.generatePassword()))
                     .role(role)
                     .build();
             userRepository.save(user);

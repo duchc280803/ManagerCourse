@@ -11,11 +11,4 @@ public class MessageResponse {
 
     private String message;
 
-    private String messageUsername;
-
-    private String messageEmail;
-
-    public MessageResponse(String message) {
-        this.message = message;
-    }
 }

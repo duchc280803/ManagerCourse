@@ -129,8 +129,13 @@ public class ClassServiceImpl implements ClassService {
         return classRepository.findAllClassName();
     }
     @Override
-    public List<ClassResponse> findAllClassName(String username) {
-        return classRepository.findAllClassNameForRole(username);
+    public List<ClassResponse> findAllClassNameForStudent(String username) {
+        return classRepository.findAllClassNameForStudent(username);
+    }
+
+    @Override
+    public List<ClassResponse> findAllClassNameForTeacher(String username) {
+        return classRepository.findAllClassNameForTeacher(username);
     }
 
     @Override

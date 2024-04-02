@@ -31,12 +31,6 @@ public class StudentController {
     public ResponseEntity<MessageResponse> createStudent(
             @Valid @RequestBody StudentRequest studentRequest
     ) {
-        if (studentService.findByUsername(studentRequest.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body(MessageResponse.builder().messageUsername("Username already exits").build());
-        }
-        if (studentService.findByEmail(studentRequest.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(MessageResponse.builder().messageEmail("Email already exits").build());
-        }
         return new ResponseEntity<>(studentService.createStudent(studentRequest), HttpStatus.CREATED);
     }
 
@@ -48,7 +42,6 @@ public class StudentController {
     ) {
         return new ResponseEntity<>(studentService.searchStudent(pageNumber, pageSize, studentName), HttpStatus.OK);
     }
-
 
     @GetMapping("student-combobox")
     public ResponseEntity<List<StudentCbResponse>> comboboxStudent() {
