@@ -1,11 +1,12 @@
 package com.example.managercourse.service.impl;
 
-import com.example.managercourse.dto.request.ClassRequest;
 import com.example.managercourse.dto.request.ClassRoomRequest;
 import com.example.managercourse.dto.response.ClassRoomResponse;
 import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.entity.ClassRoom;
+import com.example.managercourse.entity.EmailTemplate;
 import com.example.managercourse.repository.ClassRoomRepository;
+import com.example.managercourse.repository.EmailTemplateRepository;
 import com.example.managercourse.service.ClassRoomService;
 import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;

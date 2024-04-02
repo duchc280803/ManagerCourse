@@ -1,5 +1,6 @@
 package com.example.managercourse.controller;
 
+import com.example.managercourse.dto.request.RegisterUserForCourseRequest;
 import com.example.managercourse.dto.request.StudentRequest;
 import com.example.managercourse.dto.response.*;
 import com.example.managercourse.service.impl.StudentServiceImpl;
@@ -32,6 +33,13 @@ public class StudentController {
             @Valid @RequestBody StudentRequest studentRequest
     ) {
         return new ResponseEntity<>(studentService.createStudent(studentRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping("create-for-user")
+    public ResponseEntity<MessageResponse> createStudentForCourse(
+            @Valid @RequestBody RegisterUserForCourseRequest registerUserForCourseRequest
+    ) {
+        return new ResponseEntity<>(studentService.createStudentForCourse(registerUserForCourseRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("search")

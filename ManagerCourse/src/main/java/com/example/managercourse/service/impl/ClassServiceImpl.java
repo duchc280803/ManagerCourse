@@ -8,12 +8,16 @@ import com.example.managercourse.entity.Class;
 import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.ClassService;
+import com.example.managercourse.util.JavaMailSenderUtl;
 import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,15 @@ public class ClassServiceImpl implements ClassService {
 
     @Autowired
     private ClassDetailRepository classDetailRepository;
+
+    @Autowired
+    private EmailTemplateRepository emailTemplateRepository;
+
+    @Autowired
+    private JavaMailSenderImpl javaMailSender;
+
+    @Autowired
+    private MailServerRepository mailServerRepository;
 
     @Override
     public List<ClassResponse> getClassResponseList(Integer pageNumber, Integer pageSize) {
@@ -109,7 +122,10 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional
+    @Async
     public MessageResponse addStudentToClass(StudentAddClassRequest studentAddClassRequest, Integer idClass) {
+        EmailTemplate emailTemplate = emailTemplateRepository.findByTypeTemplate(3);
+        EmailServer emailServer = mailServerRepository.findByStatus(1);
         Class aClass = classRepository.findById(idClass).orElseThrow(() -> new NotFoundException("Class not found"));
 
         List<User> users = userRepository.findAllById(studentAddClassRequest.getSelectedStudentIds());
@@ -119,15 +135,39 @@ public class ClassServiceImpl implements ClassService {
             classDetail.setUser(user);
             classDetail.setAClass(aClass);
             classDetailRepository.save(classDetail);
+
+//            // Tạo nội dung email từ template
+//            String emailContent = createEmailContent(user.getFullName(), aClass.getCourse().getCourseName(), aClass.getUserTeacher().getFullName(), LocalDate.now(), emailTemplate.getContent());
+//
+//            // Gửi email
+//            JavaMailSenderUtl.send(user.getEmail(), emailTemplate.getSubject(), emailContent, javaMailSender, emailServer.getUsername(), emailServer.getPassword());
         });
 
         return MessageResponse.builder().message("Thêm thành công học viên vào lớp").build();
     }
 
+    // Hàm này thực hiện thay thế các giá trị vào nội dung email
+    private String createEmailContent(String studentName, String courseName, String teacherName, LocalDate date, String emailTemplate) {
+        // Thực hiện thay thế các giá trị vào nội dung email
+        emailTemplate = emailTemplate.replace("[Tên học viên]", studentName)
+                .replace("[Tên khóa học]", courseName)
+                .replace("[Tên giáo viên]", teacherName)
+                .replace("[Thời gian]", date.toString())
+                .replace("[Địa điểm]", "Tòa nhà Mitec, Đường Dương Đình Nghệ, Phường Yên Hoà, Quận Cầu Giấy, Hà Nội, Việt Nam\n" +
+                        "\n");
+
+        // Thêm ký tự xuống dòng vào nội dung email
+        emailTemplate += "\n\n"; // Thêm hai ký tự xuống dòng để tạo khoảng cách giữa các phần
+
+        return emailTemplate;
+    }
+
+
     @Override
     public List<ClassResponse> findAllClassName() {
         return classRepository.findAllClassName();
     }
+
     @Override
     public List<ClassResponse> findAllClassNameForStudent(String username) {
         return classRepository.findAllClassNameForStudent(username);

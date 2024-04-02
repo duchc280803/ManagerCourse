@@ -1,14 +1,12 @@
 package com.example.managercourse.controller;
 
+import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.entity.EmailTemplate;
 import com.example.managercourse.service.impl.EmailTemplateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,5 +25,15 @@ public class EmailTemplateController {
     @GetMapping("{id}")
     public ResponseEntity<EmailTemplate> getEmailTemplate(@PathVariable("id") Long id) {
         return new ResponseEntity<>(emailTemplateService.getEmailTemplate(id), HttpStatus.OK);
+    }
+
+    @PostMapping("create")
+    public ResponseEntity<MessageResponse> createMailServer(@RequestBody EmailTemplate emailTemplate) {
+        return new ResponseEntity<>(emailTemplateService.createEmailTemplate(emailTemplate), HttpStatus.CREATED);
+    }
+
+    @PutMapping("update")
+    public ResponseEntity<MessageResponse> updateMailServer(@RequestParam("id") Long id, @RequestBody EmailTemplate emailTemplate) {
+        return new ResponseEntity<>(emailTemplateService.updateMailServer(id, emailTemplate), HttpStatus.CREATED);
     }
 }

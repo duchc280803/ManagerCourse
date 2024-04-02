@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public MessageResponse register(RegisterRequest registerRequest) {
-        Role role = roleRepository.findByRole("STUDENT");
+        Role role = roleRepository.findByRole("ADMIN");
         User user = User
                 .builder()
                 .username(registerRequest.getUsername())

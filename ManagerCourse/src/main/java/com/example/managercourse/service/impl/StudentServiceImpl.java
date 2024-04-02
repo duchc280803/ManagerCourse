@@ -1,24 +1,25 @@
 package com.example.managercourse.service.impl;
 
+import com.example.managercourse.dto.request.RegisterUserForCourseRequest;
 import com.example.managercourse.dto.request.StudentRequest;
 import com.example.managercourse.dto.response.*;
-import com.example.managercourse.entity.Course;
-import com.example.managercourse.entity.CourseDetail;
-import com.example.managercourse.entity.Role;
-import com.example.managercourse.entity.User;
+import com.example.managercourse.entity.*;
 import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.StudentService;
+import com.example.managercourse.util.JavaMailSenderUtl;
 import com.example.managercourse.util.MapperUtil;
 import com.example.managercourse.util.UsernamePasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +44,15 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JavaMailSenderImpl javaMailSender;
+
+    @Autowired
+    private MailServerRepository mailServerRepository;
+
+    @Autowired
+    private EmailTemplateRepository emailTemplateRepository;
+
     @Override
     public List<StudentResponse> showListStudent(Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -53,8 +63,12 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public MessageResponse createStudent(StudentRequest studentRequest) {
+        EmailTemplate emailTemplate = emailTemplateRepository.findByTypeTemplate(1);
+        EmailServer emailServer = mailServerRepository.findByStatus(1);
         Role role = roleRepository.findByRole("STUDENT");
         Integer count = userRepository.countUserByRole_Role("STUDENT");
+        String password = UsernamePasswordGenerator.generatePassword();
+        String encodedPassword = passwordEncoder.encode(password);
         User user = User
                 .builder()
                 .codeName("HOC_VIEN_" + count)
@@ -65,7 +79,7 @@ public class StudentServiceImpl implements StudentService {
                 .address(studentRequest.getAddress())
                 .phoneNumber(studentRequest.getPhoneNumber())
                 .username(UsernamePasswordGenerator.generateUsername(studentRequest.getFullName()))
-                .password(passwordEncoder.encode(UsernamePasswordGenerator.generatePassword()))
+                .password(encodedPassword)
                 .status(1)
                 .role(role)
                 .build();
@@ -75,6 +89,9 @@ public class StudentServiceImpl implements StudentService {
         courseDetail.setCourse(course);
         courseDetail.setUser(user);
         courseDetailRepository.save(courseDetail);
+
+        String emailContent = createEmailContent(user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
+        JavaMailSenderUtl.send(user.getEmail(), emailTemplate.getSubject(), emailContent, javaMailSender, emailServer.getUsername(), emailServer.getPassword());
         return MessageResponse.builder().message("Thêm thành công").build();
     }
 
@@ -119,6 +136,52 @@ public class StudentServiceImpl implements StudentService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<CourseOfStudent> courseOfStudentPage = classRepository.getListCourseOfStudent(name, courseName, pageable);
         return courseOfStudentPage.getContent();
+    }
+
+    @Override
+    public MessageResponse createStudentForCourse(RegisterUserForCourseRequest registerUserForCourseRequest) {
+        Role role = roleRepository.findByRole("STUDENT");
+        Integer count = userRepository.countUserByRole_Role("STUDENT");
+        EmailTemplate emailTemplate = emailTemplateRepository.findByTypeTemplate(1);
+        EmailServer emailServer = mailServerRepository.findByStatus(1);
+        String password = UsernamePasswordGenerator.generatePassword();
+        String encodedPassword = passwordEncoder.encode(password);
+        User user = User
+                .builder()
+                .codeName("HOC_VIEN_" + count)
+                .fullName(registerUserForCourseRequest.getFullName())
+                .email(registerUserForCourseRequest.getEmail())
+                .phoneNumber(registerUserForCourseRequest.getPhoneNumber())
+                .username(UsernamePasswordGenerator.generateUsername(registerUserForCourseRequest.getFullName()))
+                .password(encodedPassword)
+                .status(1)
+                .role(role)
+                .build();
+        userRepository.save(user);
+        Course course = courseRepository.findByCourseName("Backend Java");
+        CourseDetail courseDetail = new CourseDetail();
+        courseDetail.setCourse(course);
+        courseDetail.setUser(user);
+        courseDetailRepository.save(courseDetail);
+
+        String emailContent = createEmailContent(user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
+        JavaMailSenderUtl.send(user.getEmail(), emailTemplate.getSubject(), emailContent, javaMailSender, emailServer.getUsername(), emailServer.getPassword());
+        return MessageResponse.builder().message("Thêm thành công").build();
+    }
+
+    private String createEmailContent(String username, String courseName, String password, LocalDate date, String emailTemplate) {
+        // Thực hiện thay thế các giá trị vào nội dung email
+        emailTemplate = emailTemplate
+                .replace("[Tên khóa học]", courseName)
+                .replace("[Thời gian]", date.toString())
+                .replace("[Địa điểm]", "Tòa nhà Mitec, Đường Dương Đình Nghệ, Phường Yên Hoà, Quận Cầu Giấy, Hà Nội, Việt Nam")
+                .replace("[username]", username)
+                .replace("[password]", password);
+
+        // Thêm ký tự xuống dòng vào nội dung email
+        emailTemplate += "\n\n"; // Thêm hai ký tự xuống dòng để tạo khoảng cách giữa các phần
+
+        return emailTemplate;
     }
 
     private void updateUserFields(User user, StudentRequest studentRequest) {

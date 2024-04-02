@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmailTemplateRepository extends JpaRepository<EmailTemplate, Long> {
+
+    EmailTemplate findByTypeTemplate(Integer type);
 }

@@ -467,6 +467,23 @@ console.log(auth);
                         </a>
                       </li>
                     </RouterLink>
+                    <RouterLink to="/mail-server" v-show="role === 'ADMIN'">
+                      <li class="sidebar-item">
+                        <a
+                          class="sidebar-link"
+                          href="#/order-counter"
+                          aria-expanded="false">
+                          <span>
+                            <img
+                              src="../assets/img/mail.png"
+                              width="180"
+                              alt=""
+                              style="width: 21px; height: 21px" />
+                          </span>
+                          <span class="hide-menu">Mail server</span>
+                        </a>
+                      </li>
+                    </RouterLink>
                   </ul>
                 </div>
               </div>

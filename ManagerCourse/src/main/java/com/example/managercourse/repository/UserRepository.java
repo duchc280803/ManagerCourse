@@ -57,7 +57,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE rl.role = 'STUDENT'")
     List<StudentCbResponse> comboboxStudent();
 
-    @Query("SELECT new com.example.managercourse.dto.response.UserInformationResponse(u.fullName, u.gender, u.phoneNumber, u.email) " +
+    @Query("SELECT new com.example.managercourse.dto.response.UserInformationResponse(u.id, u.fullName, u.gender, u.phoneNumber, u.email) " +
             "FROM User u " +
             "JOIN u.role rl " +
             "JOIN u.classDetailList cd " +
@@ -76,7 +76,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "JOIN cd.course cs " +
             "JOIN u.role rl " +
             "WHERE cs.courseName = :courseName AND rl.role = 'STUDENT'" +
-            "AND NOT EXISTS (SELECT 1 FROM Class cl JOIN cl.classDetailList cd JOIN cd.user us WHERE us.id = u.id)")
+            "AND NOT EXISTS (SELECT 1 FROM ClassDetail cd JOIN cd.user us WHERE us.id = u.id AND cs.id = cs.id)")
     List<StudentCheckBoxResponse> showListStudent(@Param("courseName") String courseName);
 
     Integer countUserByRole_Role(String role);

@@ -1,3 +1,40 @@
+<script setup>
+import { ref } from "vue";
+import axios from "axios";
+
+const fullName = ref("");
+const phoneNumber = ref("");
+const email = ref("");
+
+/**
+ * Create a new student
+ */
+const resetForm = () => {
+  fullName.value = "";
+  phoneNumber.value = "";
+  email.value = "";
+};
+const createStudent = async () => {
+  const newStudent = {
+    fullName: fullName.value,
+    phoneNumber: phoneNumber.value,
+    email: email.value,
+  };
+  const response = await axios.post(`http://localhost:8080/api/v1/student/create-for-user`, newStudent);
+  resetForm(); // Reset form data and error messages after successful create operation
+  closeModal("#exampleModal"); // Close modal
+};
+
+const closeModal = (modalId) => {
+  const modal = document.querySelector(modalId);
+  const backdrop = document.querySelector(".modal-backdrop");
+  if (modal && backdrop) {
+    modal.classList.remove("show");
+    modal.style.display = "none";
+    backdrop.remove();
+  }
+};
+</script>
 <template>
   <div class="img-banner" style="padding-top: 105px">
     <img src="../assets/maxresdefault.jpg" alt="" style="padding-left: 140px" />
@@ -256,8 +293,7 @@
                 dữ liệu, tương tác với cơ sở dữ liệu, và cung cấp các dịch vụ và
                 logic cần thiết để ứng dụng hoạt động một cách hiệu quả và đáng
                 tin cậy Học và thực hành với mentor trong các dự án thực tế ngay
-                tại tập đoàn công nghệ LTS Group, chuẩn bị cho sự nghiệp phát
-                triển Backend.
+                tại tập đoàn.
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -276,9 +312,9 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
@@ -296,7 +332,7 @@
                 dựng giao diện người dùng hấp dẫn. Ngoài ra, khóa học cũng giới
                 thiệu về JavaScript và framework ReactJS, giúp bạn xây dựng các
                 ứng dụng web tương tác và linh hoạt. Bootstrap cũng được đề cập
-                để giúp bạn tối ưu hóa trải nghiệm trên các thiết bị khác nhau.
+                để .
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -315,9 +351,10 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
@@ -334,8 +371,7 @@
                 các kiến thức về front-end như HTML, CSS, JavaScript, ReactJS
                 Framework cũng như Java Servlets, JSP, My SQL, Spring Boot
                 Framework và JDBC để xây dựng phần backend của ứng dụng web.
-                Đồng thời, bạn cũng sẽ tiếp cận các khái niệm về Fullstack, giúp
-                bạn tích hợp
+                Đồng thời,
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -354,9 +390,10 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
@@ -376,8 +413,7 @@
                 tập trung vào phát triển ứng dụng web từ đầu đến cuối, bao gồm
                 cả phần Frontend và Backend. Học viên sẽ học về ngôn ngữ lập
                 trình Java từ cơ bản đến nâng cao, Java OOP, quản lý dữ liệu với
-                MySQL, JPA, Spring Boot Web Service ở phía Back-end; HTML, CSS,
-                Javascript, ReactJS Framework ở phía Frontend.
+                MySQL, JPA, Spring Boot Web Service ở phía Back-end; HTML, CSS.
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -396,9 +432,10 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
@@ -415,7 +452,7 @@
                 các kiến thức về front-end như HTML, CSS, JavaScript, ReactJS
                 Framework cũng như Java Servlets, JSP, My SQL, Spring Boot
                 Framework và JDBC để xây dựng phần backend của ứng dụng web.
-                Đồng thời, bạn cũng sẽ tiếp cận các khái niệm về Fullstack.
+                Đồng thời.
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -434,9 +471,10 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
@@ -455,7 +493,7 @@
                 tượng trong Java OOP là cơ hội tuyệt vời để tìm hiểu về cách xây
                 dựng và tối ưu hóa mã nguồn. Bạn sẽ được học về cấu trúc dữ liệu
                 như danh sách liên kết, hàng đợi, ngăn xếp và cây, cũng như cách
-                phân tích và triển khai các giải thuật như tìm kiếm và sắp xếp.
+                phân tích.
               </p>
               <div class="meta-part">
                 <div class="user">
@@ -474,15 +512,44 @@
                 </div>
               </div>
               <div class="btn-part">
-                <a target="_blank" href="" data-toggle="modal" data-target="#contactModal">
-                  Liên hệ ngay
-                </a>
+                <button target="_blank" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Đăng ký ngay
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <br />
+    </div>
+  </div>
+  <!-- Modal -->
+  <!-- Button trigger modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Đăng ký khóa học</h5>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="" class="form-label">Họ và tên</label>
+            <input type="text" class="form-control" placeholder="Họ và tên ..." v-model="fullName" />
+          </div>
+          <div class="form-group">
+            <label for="" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" placeholder="Số điện thoại ..." v-model="phoneNumber" />
+          </div>
+          <div class="form-group">
+            <label for="" class="form-label">Email</label>
+            <input type="text" class="form-control" placeholder="Email ..." v-model="email" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" @click="createStudent()">Send</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -523,14 +590,22 @@
   margin-top: 16px;
   width: 100%;
   background: #ff5421;
-  outline: none;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.btn-part button {
+  margin-top: 16px;
+  width: 100%;
+  background: #ff5421;
   border: none;
   padding: 8px;
   border-radius: 4px;
   display: inline-block;
   color: #ffffff;
-  position: relative;
-  overflow: hidden;
   text-align: center;
 }
 
@@ -556,4 +631,7 @@
   color: #031a3d;
 }
 
+.pap {
+  padding-top: 20px;
+}
 </style>

@@ -1,14 +1,13 @@
 package com.example.managercourse.controller;
 
+import com.example.managercourse.dto.request.MailServerRequest;
+import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.entity.EmailServer;
 import com.example.managercourse.service.impl.MailServerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,4 +27,10 @@ public class EmailServerController {
     public ResponseEntity<List<EmailServer>> getAllEmailServer() {
         return new ResponseEntity<>(mailServerService.getAllMailServer(), HttpStatus.OK);
     }
+
+    @PostMapping("create")
+    public ResponseEntity<MessageResponse> createMailServer(@RequestBody MailServerRequest mailServerRequest) {
+        return new ResponseEntity<>(mailServerService.createMailServer(mailServerRequest), HttpStatus.CREATED);
+    }
+
 }

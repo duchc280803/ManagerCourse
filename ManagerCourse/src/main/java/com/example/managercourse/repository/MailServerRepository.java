@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MailServerRepository extends JpaRepository<EmailServer, Long> {
+
+    EmailServer findByStatus(Integer status);
 }
