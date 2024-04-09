@@ -2,8 +2,6 @@ package com.example.managercourse.dto.response;
 
 import lombok.*;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -16,8 +16,12 @@ import java.util.List;
 @RequestMapping("/api/v1/class-room/")
 public class ClassRoomController {
 
+    private final ClassRoomServiceImpl classRoomService;
+
     @Autowired
-    private ClassRoomServiceImpl classRoomService;
+    public ClassRoomController(ClassRoomServiceImpl classRoomService) {
+        this.classRoomService = classRoomService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<ClassRoomResponse>> findAllClassRoom(

@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/api/v1/subject/")
 public class SubjectController {
 
+    private final SubjectServiceImpl subjectService;
+
     @Autowired
-    private SubjectServiceImpl subjectService;
+    public SubjectController(SubjectServiceImpl subjectService) {
+        this.subjectService = subjectService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<SubjectResponse>> getListSubjectName(
@@ -85,9 +89,10 @@ public class SubjectController {
     public ResponseEntity<List<SubjectResponse>> getListSubjectByCourse(
             @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "8") Integer pageSize,
-            @RequestParam(name = "id") Integer id
+            @RequestParam(name = "id") Integer id,
+            @RequestParam(name = "classify") Integer classify
     ) {
-        return new ResponseEntity<>(subjectService.getListSubjectByCourse(pageNumber, pageSize, id), HttpStatus.OK);
+        return new ResponseEntity<>(subjectService.getListSubjectByCourse(pageNumber, pageSize, id, classify), HttpStatus.OK);
     }
 
     @GetMapping("subject-add-course")
@@ -98,9 +103,9 @@ public class SubjectController {
     }
 
     @GetMapping("subject-by-class-schedule")
-    public ResponseEntity<List<SubjectResponse>> getListSubjectForClass_Subject_Schedule(
+    public ResponseEntity<List<SubjectResponse>> getListSubjectForClassSubjectSchedule(
             @RequestParam(name = "id") Integer id
     ) {
-        return new ResponseEntity<>(subjectService.getListSubjectForClass_Subject_Schedule(id), HttpStatus.OK);
+        return new ResponseEntity<>(subjectService.getListSubjectForClassSubjectSchedule(id), HttpStatus.OK);
     }
 }

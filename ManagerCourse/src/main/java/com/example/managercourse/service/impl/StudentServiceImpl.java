@@ -8,13 +8,13 @@ import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.StudentService;
 import com.example.managercourse.util.JavaMailSenderUtl;
-import com.example.managercourse.util.MapperUtil;
 import com.example.managercourse.util.UsernamePasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,32 +26,46 @@ import java.util.Optional;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final CourseRepository courseRepository;
+
+    private final RoleRepository roleRepository;
+
+    private final CourseDetailRepository courseDetailRepository;
+
+    private final ClassRepository classRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JavaMailSenderImpl javaMailSender;
+
+    private final MailServerRepository mailServerRepository;
+
+    private final EmailTemplateRepository emailTemplateRepository;
 
     @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private CourseDetailRepository courseDetailRepository;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JavaMailSenderImpl javaMailSender;
-
-    @Autowired
-    private MailServerRepository mailServerRepository;
-
-    @Autowired
-    private EmailTemplateRepository emailTemplateRepository;
+    public StudentServiceImpl(
+            UserRepository userRepository,
+            CourseRepository courseRepository,
+            RoleRepository roleRepository,
+            CourseDetailRepository courseDetailRepository,
+            ClassRepository classRepository,
+            PasswordEncoder passwordEncoder,
+            JavaMailSenderImpl javaMailSender,
+            MailServerRepository mailServerRepository,
+            EmailTemplateRepository emailTemplateRepository
+    ) {
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.roleRepository = roleRepository;
+        this.courseDetailRepository = courseDetailRepository;
+        this.classRepository = classRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.javaMailSender = javaMailSender;
+        this.mailServerRepository = mailServerRepository;
+        this.emailTemplateRepository = emailTemplateRepository;
+    }
 
     @Override
     public List<StudentResponse> showListStudent(Integer pageNumber, Integer pageSize) {
@@ -62,11 +76,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
+    @Async
     public MessageResponse createStudent(StudentRequest studentRequest) {
         EmailTemplate emailTemplate = emailTemplateRepository.findByTypeTemplate(1);
         EmailServer emailServer = mailServerRepository.findByStatus(1);
-        Role role = roleRepository.findByRole("STUDENT");
-        Integer count = userRepository.countUserByRole_Role("STUDENT");
+        Role role = roleRepository.findByRoleName("STUDENT");
+        Integer count = userRepository.countUserByRole_RoleName("STUDENT");
         String password = UsernamePasswordGenerator.generatePassword();
         String encodedPassword = passwordEncoder.encode(password);
         User user = User
@@ -90,7 +105,7 @@ public class StudentServiceImpl implements StudentService {
         courseDetail.setUser(user);
         courseDetailRepository.save(courseDetail);
 
-        String emailContent = createEmailContent(user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
+        String emailContent = createEmailContent(user.getPhoneNumber(), user.getFullName(), user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
         JavaMailSenderUtl.send(user.getEmail(), emailTemplate.getSubject(), emailContent, javaMailSender, emailServer.getUsername(), emailServer.getPassword());
         return MessageResponse.builder().message("Thêm thành công").build();
     }
@@ -140,8 +155,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public MessageResponse createStudentForCourse(RegisterUserForCourseRequest registerUserForCourseRequest) {
-        Role role = roleRepository.findByRole("STUDENT");
-        Integer count = userRepository.countUserByRole_Role("STUDENT");
+        Role role = roleRepository.findByRoleName("STUDENT");
+        Integer count = userRepository.countUserByRole_RoleName("STUDENT");
         EmailTemplate emailTemplate = emailTemplateRepository.findByTypeTemplate(1);
         EmailServer emailServer = mailServerRepository.findByStatus(1);
         String password = UsernamePasswordGenerator.generatePassword();
@@ -164,17 +179,18 @@ public class StudentServiceImpl implements StudentService {
         courseDetail.setUser(user);
         courseDetailRepository.save(courseDetail);
 
-        String emailContent = createEmailContent(user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
+        String emailContent = createEmailContent(user.getPhoneNumber(), user.getFullName(), user.getUsername(), course.getCourseName(), password, LocalDate.now(), emailTemplate.getContent());
         JavaMailSenderUtl.send(user.getEmail(), emailTemplate.getSubject(), emailContent, javaMailSender, emailServer.getUsername(), emailServer.getPassword());
         return MessageResponse.builder().message("Thêm thành công").build();
     }
 
-    private String createEmailContent(String username, String courseName, String password, LocalDate date, String emailTemplate) {
+    private String createEmailContent(String phoneNumber, String fullName, String username, String courseName, String password, LocalDate date, String emailTemplate) {
         // Thực hiện thay thế các giá trị vào nội dung email
         emailTemplate = emailTemplate
+                .replace("[Tên học viên]", fullName)
+                .replace("[Số điện thoại học viên] ", phoneNumber)
                 .replace("[Tên khóa học]", courseName)
                 .replace("[Thời gian]", date.toString())
-                .replace("[Địa điểm]", "Tòa nhà Mitec, Đường Dương Đình Nghệ, Phường Yên Hoà, Quận Cầu Giấy, Hà Nội, Việt Nam")
                 .replace("[username]", username)
                 .replace("[password]", password);
 
@@ -195,18 +211,19 @@ public class StudentServiceImpl implements StudentService {
 
     private void updateCourseDetail(User user, String courseName) {
         Course course = courseRepository.findByCourseName(courseName);
-        System.out.println(course.getId());
         if (course == null) {
             throw new NotFoundException("Không tìm thấy khóa học này");
         }
+
         CourseDetail courseDetail = courseDetailRepository.findByCourseAndUser(course, user);
-        if (courseDetail != null) {
-            courseDetail.setCourse(course);
-            courseDetailRepository.save(courseDetail);
-        } else {
+        if (courseDetail == null) {
             throw new NotFoundException("Không tìm thấy chi tiết khóa học cho sinh viên này");
         }
+
+        courseDetail.setCourse(course);
+        courseDetailRepository.save(courseDetail);
     }
+
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);

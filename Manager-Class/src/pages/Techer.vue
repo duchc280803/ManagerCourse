@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import axios from "axios";
+import { notifyError, notifySuccess } from "@/toast-message/NotifyMessage"
 
 /**
  * Add list course to selected
@@ -21,10 +22,10 @@ const addItem = () => {
  * Get list teacher
  */
 const listTeacher = ref([]);
-var pageNumber = 0;
-var pageSize = 6;
+let pageNumber = 0;
+let pageSize = 6;
 const getListteacher = async () => {
-  axios
+  await axios
     .get(
       `http://localhost:8080/api/v1/teacher/show?pageNumber=${pageNumber}&pageSize=${pageSize}`
     )
@@ -58,16 +59,6 @@ const findByCourseName = async () => {
 };
 findByCourseName();
 
-/**
- * Add a new teacher
- */
-const fullName = ref("");
-const gender = ref("");
-const age = ref("");
-const dateOfBirth = ref("");
-const phoneNumber = ref("");
-const address = ref("");
-const email = ref("");
 const createTeacher = async () => {
   const newTeacher = {
     fullName: fullName.value,
@@ -83,6 +74,7 @@ const createTeacher = async () => {
     .post(`http://localhost:8080/api/v1/teacher/create`, newTeacher)
     .then(function (response) {
       listTeacher.value.push(response.data);
+      notifySuccess("Thêm dữ liệu thành công!")
       getListteacher();
       let modal = document.getElementById("exampleModal");
       if (modal) {
@@ -95,6 +87,11 @@ const createTeacher = async () => {
           modalBackdrop.parentNode.removeChild(modalBackdrop);
         }
       }
+    })
+    .catch(function (error) {
+      // Xử lý lỗi nếu có
+      console.log(error);
+      notifyError("Thêm dữ liệu thất bại!")
     });
 };
 
@@ -176,22 +173,16 @@ const updateTeacher = async (id) => {
         <div class="row search_table">
           <div class="col-4">
             <div class="input-group-prepend position-relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm"
-                class="form-control search"
-                v-model.trim="search" />
+              <input type="text" placeholder="Tìm kiếm" class="form-control search" v-model.trim="search" />
             </div>
           </div>
           <div class="col-lg-4">
-            <button
-              @click="refresh()"
-              style="
+            <button @click="refresh()" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
                 color: black;
-                margin-left: 25px;
+                margin-left: 40px;
                 margin-top: 5px;
                 font-weight: 600;
               ">
@@ -200,10 +191,7 @@ const updateTeacher = async (id) => {
           </div>
           <div class="col-2"></div>
           <div class="col-2">
-            <button
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-              style="
+            <button data-bs-toggle="modal" data-bs-target="#exampleModal" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
@@ -218,8 +206,7 @@ const updateTeacher = async (id) => {
         <section class="section-table">
           <table>
             <thead>
-              <tr
-                style="
+              <tr style="
                   background-color: #d5d1defe;
                   height: 52px;
                   text-align: center;
@@ -235,10 +222,7 @@ const updateTeacher = async (id) => {
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(t, index) in listTeacher"
-                :key="t.id"
-                style="text-align: center">
+              <tr v-for="(t, index) in listTeacher" :key="t.id" style="text-align: center">
                 <td>{{ index + 1 + pageNumber * pageSize }}</td>
                 <td>{{ t.codeName }}</td>
                 <td>{{ t.fullName }}</td>
@@ -246,22 +230,18 @@ const updateTeacher = async (id) => {
                   {{ t.courseOfClassList.length }}
                 </td>
                 <td>{{ t.phoneNumber }}</td>
-                <td>{{ t.email }}</td>
+                <td style="max-width: none;">{{ t.email }}</td>
                 <td>
-                  <span
-                    :style="{
-                      'background-color': t.status == 1 ? '#9bcf53' : 'red',
-                      'border-radius': '5px',
-                      color: t.status == 1 ? 'darkgreen' : 'white',
-                    }">
+                  <span :style="{
+                    'background-color': t.status == 1 ? '#9bcf53' : 'red',
+                    'border-radius': '5px',
+                    color: t.status == 1 ? 'darkgreen' : 'white',
+                  }">
                     {{ t.status == 1 ? "Hoạt động" : "Ngừng hoạt động" }}
                   </span>
                 </td>
                 <td>
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal1"
-                    @click="showDetetailTeacher(t.id)"
+                  <button data-bs-toggle="modal" data-bs-target="#exampleModal1" @click="showDetetailTeacher(t.id)"
                     style="
                       text-decoration: none;
                       background-color: #fc6736;
@@ -295,27 +275,17 @@ const updateTeacher = async (id) => {
     </div>
   </div>
   <!-- Modal add-->
-  <div
-    class="modal fade"
-    id="exampleModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg">
         <div class="modal-header">
           <h5 class="modal-title">Thêm mới giảng viên</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Họ và tên
@@ -324,11 +294,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Họ và tên..."
-                    v-model="fullName" />
+                  <input type="text" class="form-control an-select" placeholder="Họ và tên..." v-model="fullName" />
                 </div>
               </div>
               <div class="pap"></div>
@@ -340,10 +306,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    v-model="gender"
-                    class="form-select"
-                    aria-label="Default select example">
+                  <select v-model="gender" class="form-select" aria-label="Default select example">
                     <option disabled value="">Chọn giới tính</option>
                     <option :value="true">Nam</option>
                     <option :value="false">Nữ</option>
@@ -359,10 +322,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="dateOfBirth" />
+                  <input type="date" class="form-control an-select" v-model="dateOfBirth" />
                 </div>
               </div>
               <div class="pap"></div>
@@ -376,25 +336,14 @@ const updateTeacher = async (id) => {
                 <div>
                   <div class="combobox">
                     <div class="card" v-show="dropdownVisible">
-                      <select
-                        class="form-select"
-                        v-model="selectedCourseName"
-                        @change="addItem()">
-                        <option
-                          v-for="item in getListCourseName"
-                          :key="item"
-                          :value="item.courseName">
+                      <select class="form-select" v-model="selectedCourseName" @change="addItem()">
+                        <option v-for="item in getListCourseName" :key="item" :value="item.courseName">
                           {{ item.courseName }}
                         </option>
                       </select>
                     </div>
-                    <input
-                      type="text"
-                      class="form-control an-select"
-                      placeholder="Chọn khóa học"
-                      v-model="inputValue"
-                      @focus="showDropdown"
-                      @blur="hideDropdown" />
+                    <input type="text" class="form-control an-select" placeholder="Chọn khóa học" v-model="inputValue"
+                      @focus="showDropdown" @blur="hideDropdown" />
                   </div>
                 </div>
               </div>
@@ -407,10 +356,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Số điện thoại..."
+                  <input type="text" class="form-control an-select" placeholder="Số điện thoại..."
                     v-model="phoneNumber" />
                 </div>
               </div>
@@ -423,11 +369,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Email..."
-                    v-model="email" />
+                  <input type="text" class="form-control an-select" placeholder="Email..." v-model="email" />
                 </div>
               </div>
               <div class="pap"></div>
@@ -439,27 +381,17 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Địa chỉ..."
-                    v-model="address" />
+                  <input type="text" class="form-control an-select" placeholder="Địa chỉ..." v-model="address" />
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="createTeacher()">
+          <button type="button" class="btn btn-primary" @click="createTeacher()">
             Lưu
           </button>
         </div>
@@ -467,27 +399,17 @@ const updateTeacher = async (id) => {
     </div>
   </div>
   <!-- Modal update-->
-  <div
-    class="modal fade"
-    id="exampleModal1"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg">
         <div class="modal-header">
           <h5 class="modal-title">Sửa giảng viên</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Họ và tên
@@ -496,10 +418,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Họ và tên..."
+                  <input type="text" class="form-control an-select" placeholder="Họ và tên..."
                     v-model="updateTeacherResponse.fullName" />
                 </div>
               </div>
@@ -512,9 +431,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
+                  <select class="form-select" aria-label="Default select example"
                     v-model="updateTeacherResponse.gender">
                     <option :value="true">Nam</option>
                     <option :value="false">Nữ</option>
@@ -530,10 +447,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="date"
-                    class="form-control an-select"
-                    v-model="updateTeacherResponse.yearOfBirth" />
+                  <input type="date" class="form-control an-select" v-model="updateTeacherResponse.yearOfBirth" />
                 </div>
               </div>
               <div class="pap"></div>
@@ -547,25 +461,14 @@ const updateTeacher = async (id) => {
                 <div>
                   <div class="combobox">
                     <div class="card" v-show="dropdownVisible">
-                      <select
-                        class="form-select"
-                        v-model="selectedCourseName"
-                        @change="addItemUpdate()">
-                        <option
-                          v-for="item in getListCourseName"
-                          :key="item"
-                          :value="item.courseName">
+                      <select class="form-select" v-model="selectedCourseName" @change="addItemUpdate()">
+                        <option v-for="item in getListCourseName" :key="item" :value="item.courseName">
                           {{ item.courseName }}
                         </option>
                       </select>
                     </div>
-                    <input
-                      type="text"
-                      class="form-control an-select"
-                      placeholder="Chọn khóa học"
-                      v-model="updateTeacherResponse.inputValue"
-                      @focus="showDropdown"
-                      @blur="hideDropdown" />
+                    <input type="text" class="form-control an-select" placeholder="Chọn khóa học"
+                      v-model="updateTeacherResponse.inputValue" @focus="showDropdown" @blur="hideDropdown" />
                   </div>
                 </div>
               </div>
@@ -578,10 +481,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Số điện thoại..."
+                  <input type="text" class="form-control an-select" placeholder="Số điện thoại..."
                     v-model="updateTeacherResponse.phoneNumber" />
                 </div>
               </div>
@@ -594,10 +494,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Email..."
+                  <input type="text" class="form-control an-select" placeholder="Email..."
                     v-model="updateTeacherResponse.email" />
                 </div>
               </div>
@@ -610,10 +507,7 @@ const updateTeacher = async (id) => {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Địa chỉ..."
+                  <input type="text" class="form-control an-select" placeholder="Địa chỉ..."
                     v-model="updateTeacherResponse.address" />
                 </div>
               </div>
@@ -621,16 +515,10 @@ const updateTeacher = async (id) => {
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="updateTeacher(updateTeacherResponse.id)">
+          <button type="button" class="btn btn-primary" @click="updateTeacher(updateTeacherResponse.id)">
             Lưu
           </button>
         </div>
@@ -639,9 +527,6 @@ const updateTeacher = async (id) => {
   </div>
 </template>
 <style scoped>
-* {
-  font-family: BaiJamjuree !important;
-}
 .pap {
   padding-top: 20px;
 }
@@ -659,6 +544,7 @@ const updateTeacher = async (id) => {
 .search_table {
   margin: 0;
 }
+
 input.form-control.search {
   width: 410px;
 }
@@ -666,8 +552,9 @@ input.form-control.search {
 table {
   width: 100%;
 }
+
 .section-table {
- 
+
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;
@@ -709,14 +596,19 @@ input.form-control.an-select {
   display: inline-block;
   cursor: pointer;
 }
+
 td {
-  width: 50px;
   height: 50px;
-  background-color: #f0f0f0; /* Màu nền của ô */
-  border: 1px solid #ccc; /* Đường viền */
-  border-radius: 10px; /* Góc bo */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+  background-color: #f0f0f0;
+  /* Màu nền của ô */
+  border: 1px solid #ccc;
+  /* Đường viền */
+  border-radius: 10px;
+  /* Góc bo */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* Đổ bóng */
 }
+
 tr {
   height: 54px;
 }

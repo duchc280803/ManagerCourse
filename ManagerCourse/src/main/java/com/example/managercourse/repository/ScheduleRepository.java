@@ -2,7 +2,6 @@ package com.example.managercourse.repository;
 
 import com.example.managercourse.dto.response.ScheduleDetailResponse;
 import com.example.managercourse.dto.response.ScheduleResponse;
-import com.example.managercourse.entity.Class;
 import com.example.managercourse.entity.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -2,7 +2,9 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import { ref } from "vue";
-var username = window.localStorage.getItem("username");
+import { notifyError, notifySuccess } from "@/toast-message/NotifyMessage"
+
+let username = window.localStorage.getItem("username");
 const personal = ref({});
 const fillPersonal = async () => {
   axios
@@ -27,23 +29,14 @@ const updatePersonal = async () => {
     reverseButtons: true,
   }).then((result) => {
     if (result.value) {
-      axios
+     axios
         .put(
           `http://localhost:8080/api/v1/auth/update-personal/${username}`,
           personal.value
         )
         .then(function (response) {
           fillPersonal();
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Cập nhật thành công",
-            timer: 1500,
-            customClass: {
-              popup: "small-popup", // Thêm class cho message
-            },
-            showConfirmButton: false, // Ẩn nút "OK"
-          });
+          notifySuccess("Cập nhập thành công")
         })
         .catch(function (error) {
           errorInfor.value = error.response.data;
@@ -78,9 +71,6 @@ const updatePersonal = async () => {
       data-v-d7d2693e=""
       class="ant-row"
       style="
-        margin-left: -12.5px;
-        margin-right: -12.5px;
-        margin-bottom: 10px;
         margin: 15px;
         row-gap: 0px;
       ">

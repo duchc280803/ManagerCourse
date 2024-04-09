@@ -3,7 +3,6 @@ package com.example.managercourse.service;
 import com.example.managercourse.dto.request.RegisterUserForCourseRequest;
 import com.example.managercourse.dto.request.StudentRequest;
 import com.example.managercourse.dto.response.*;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

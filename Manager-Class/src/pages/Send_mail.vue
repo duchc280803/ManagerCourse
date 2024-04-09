@@ -232,12 +232,12 @@ const updateMailServer = async (id) => {
                 <select class="form-select" aria-label="Default select example" v-model="typeTemplate">
                   <option disabled value="">Chọn mẫu</option>
                   <option :value="1">
-                    Mẫu đăng ký tài khoản
-                  </option>
-                  <option :value="3">
-                    Mẫu vào lớp học
+                    Mẫu tạo học viên mới
                   </option>
                   <option :value="2">
+                    Mẫu tạo giảng viên mới
+                  </option>
+                  <option :value="3">
                     Mẫu đăng ký khóa học
                   </option>
                 </select>
@@ -296,12 +296,12 @@ const updateMailServer = async (id) => {
                   disabled>
                   <option disabled value="">Chọn mẫu</option>
                   <option :value="1">
-                    Mẫu đăng ký tài khoản
-                  </option>
-                  <option :value="3">
-                    Mẫu vào lớp học
+                    Mẫu tạo học viên mới
                   </option>
                   <option :value="2">
+                    Mẫu tạo giảng viên mới
+                  </option>
+                  <option :value="3">
                     Mẫu đăng ký khóa học
                   </option>
                 </select>
@@ -360,12 +360,12 @@ const updateMailServer = async (id) => {
                   disabled>
                   <option disabled value="">Chọn mẫu</option>
                   <option :value="1">
-                    Mẫu đăng ký tài khoản
-                  </option>
-                  <option :value="3">
-                    Mẫu vào lớp học
+                    Mẫu tạo học viên mới
                   </option>
                   <option :value="2">
+                    Mẫu tạo giảng viên mới
+                  </option>
+                  <option :value="3">
                     Mẫu đăng ký khóa học
                   </option>
                 </select>

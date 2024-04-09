@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api/v1/contact/")
 public class ContactController {
 
+    private final ContactServiceImpl contactService;
+
     @Autowired
-    private ContactServiceImpl contactService;
+    public ContactController(ContactServiceImpl contactService) {
+        this.contactService = contactService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<ContactResponse>> selectContact(

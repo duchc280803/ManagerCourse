@@ -15,40 +15,41 @@ import com.example.managercourse.repository.ScheduleRepository;
 import com.example.managercourse.repository.SubjectRepository;
 import com.example.managercourse.service.ScheduleService;
 import jakarta.persistence.EntityNotFoundException;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
+    private final ScheduleRepository scheduleRepository;
+
+    private final ClassRoomRepository classRoomRepository;
+
+    private final ClassRepository classRepository;
+
+    private final SubjectRepository subjectRepository;
 
     @Autowired
-    private ClassRoomRepository classRoomRepository;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private SubjectRepository subjectRepository;
+    public ScheduleServiceImpl(
+            ScheduleRepository scheduleRepository,
+            ClassRoomRepository classRoomRepository,
+            ClassRepository classRepository,
+            SubjectRepository subjectRepository
+    ) {
+        this.scheduleRepository = scheduleRepository;
+        this.classRoomRepository = classRoomRepository;
+        this.classRepository = classRepository;
+        this.subjectRepository = subjectRepository;
+    }
 
     @Override
     public List<ScheduleResponse> findAllSchedule(Integer pageNumber, Integer pageSize, Integer id,  Integer idSubject, String username) {
@@ -116,10 +117,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public Boolean checkTimeSchedule(LocalTime timeStart, LocalTime timeEnd, Integer day, Integer id) {
         List<Schedule> scheduleList = scheduleRepository.check(timeStart, timeEnd, day, id);
-        if (scheduleList.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !scheduleList.isEmpty();
     }
 
     private Schedule createScheduleForDay(Class aClass, Subject subject, ClassRoom classRoom, ScheduleRequest scheduleRequest) {
@@ -133,7 +131,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         // Nếu ngày bắt đầu là một ngày học được chọn, chuyển sang ngày học tiếp theo
         if (selectedValue == 1 && (currentDate.getDayOfWeek() == DayOfWeek.MONDAY || currentDate.getDayOfWeek() == DayOfWeek.WEDNESDAY || currentDate.getDayOfWeek() == DayOfWeek.FRIDAY)) {
             currentDate = currentDate.plusDays(1);
-        } else if (selectedValue == 2 && (currentDate.getDayOfWeek() == DayOfWeek.TUESDAY || currentDate.getDayOfWeek() == DayOfWeek.THURSDAY || currentDate.getDayOfWeek() == DayOfWeek.SATURDAY)) {
+        }
+        if (selectedValue == 2 && (currentDate.getDayOfWeek() == DayOfWeek.TUESDAY || currentDate.getDayOfWeek() == DayOfWeek.THURSDAY || currentDate.getDayOfWeek() == DayOfWeek.SATURDAY)) {
             currentDate = currentDate.plusDays(1);
         }
 

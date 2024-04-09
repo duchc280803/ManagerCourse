@@ -71,15 +71,18 @@ getListCourseName();
 /**
  * Get list teacher
  */
+ const courseName = ref("");
 const getListTeacher = ref([]);
 const fillTeacher = async () => {
   axios
-    .get(`http://localhost:8080/api/v1/course/fill-teacher`)
+    .get(`http://localhost:8080/api/v1/course/fill-teacher-for-course?courseName=${courseName.value}`)
     .then(function (response) {
       getListTeacher.value = response.data;
     });
 };
-fillTeacher();
+watch(courseName, () => {
+  fillTeacher();
+})
 
 /**
  * Create a new class
@@ -89,7 +92,7 @@ const className = ref("");
 const quantityStudent = ref("");
 const required = ref("");
 const teacherName = ref("");
-const courseName = ref("");
+
 
 const errorCreateClass = ref({});
 const createClass = async () => {
@@ -278,7 +281,7 @@ const updateclass = async (id) => {
                   height: 52px;
                   text-align: center;
                 ">
-                <th style="width: 30px">STT</th>
+                <th>STT</th>
                 <th>Mã lớp</th>
                 <th>Tên lớp</th>
                 <th>Khóa học</th>
@@ -749,7 +752,6 @@ table {
   width: 100%;
 }
 .section-table {
- 
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;
@@ -757,8 +759,6 @@ table {
   overflow: overlay;
 }
 td {
-  padding-left: 5px;
-  width: 50px;
   height: 50px;
   background-color: #f0f0f0; /* Màu nền của ô */
   border: 1px solid #ccc; /* Đường viền */

@@ -3,9 +3,6 @@ package com.example.managercourse.service;
 import com.example.managercourse.dto.request.ClassRequest;
 import com.example.managercourse.dto.request.StudentAddClassRequest;
 import com.example.managercourse.dto.response.*;
-import com.example.managercourse.entity.Class;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface ClassService {
@@ -27,8 +24,6 @@ public interface ClassService {
     MessageResponse addStudentToClass(StudentAddClassRequest studentAddClassRequest, Integer idClass);
 
     List<ClassResponse> findAllClassName();
-
-    List<ClassResponse> findAllClassNameForStudent(String username);
 
     List<ClassResponse> findAllClassNameForTeacher(String username);
 

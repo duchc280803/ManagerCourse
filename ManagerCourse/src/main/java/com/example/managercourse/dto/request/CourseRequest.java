@@ -34,6 +34,9 @@ public class CourseRequest {
     @NotBlank(message = "Scheduled is required")
     private String scheduled;
 
+    @NotBlank(message = "Image is required")
+    private String image;
+
     @NotEmpty(message = "At least one teacher name is required")
     private List<String> nameTeacher;
 

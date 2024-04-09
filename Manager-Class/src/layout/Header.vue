@@ -517,7 +517,7 @@ console.log(auth);
   height: 72px;
 }
 .dSWqCR header {
-  box-shadow: 0 5px 20px #adb5d905;
+  box-shadow: 0 5px 20px #adb5d905; /* đổ bóng*/
   z-index: 998;
   background-color: #ffffff;
 }

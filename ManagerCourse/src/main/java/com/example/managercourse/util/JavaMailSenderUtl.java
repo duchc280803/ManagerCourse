@@ -7,7 +7,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 public class JavaMailSenderUtl {
 
-    public static void send(String to, String subject, String content, JavaMailSenderImpl javaMailSender, String email, String password) {
+    private JavaMailSenderUtl() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static void send(String to, String subject, String content, JavaMailSenderImpl javaMailSender, String email, String password) throws RuntimeException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 

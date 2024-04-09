@@ -261,7 +261,7 @@ const updateclassRoom = async (id) => {
                 text-align: center;
               ">
               <th>STT</th>
-              <th style="width: 0px;">Mã phòng</th>
+              <th>Mã phòng</th>
               <th>Tên phòng</th>
               <th>Loại phòng học</th>
               <th>Số lượng người</th>
@@ -276,7 +276,7 @@ const updateclassRoom = async (id) => {
               <td>{{ cl.codeClassRoom }}</td>
               <td>{{ cl.classRoomName }}</td>
               <td>
-                {{ cl.typeClassRoom == 1 ? "Phòng bình thường" : "Phòng vip" }}
+                {{ cl.typeClassRoom == 1 ? "Phòng lý thuyết" : 2 ? "Phòng thực hành" : "Phòng tự học" }}
               </td>
               <td>{{ cl.quantityStudent }}</td>
               <td>{{ cl.floor == 1 ? "Tầng 1" : 2 ? "Tầng 2" : "Tầng 3" }}</td>
@@ -613,7 +613,6 @@ table {
 }
 td {
   padding-left: 5px;
-  width: 50px;
   height: 50px;
   background-color: #f0f0f0; /* Màu nền của ô */
   border: 1px solid #ccc; /* Đường viền */

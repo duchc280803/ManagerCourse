@@ -15,7 +15,7 @@ import java.util.List;
 public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     @Query("SELECT new com.example.managercourse.dto.response.ClassResponse(cl.id, cl.classCode, cl.className, cl.quantityStudent, s.courseName, u.fullName, cl.status) " +
-            "FROM Class cl JOIN cl.course s JOIN cl.userTeacher u JOIN u.role rl WHERE rl.role = 'TEACHER' ORDER BY cl.id desc")
+            "FROM Class cl JOIN cl.course s JOIN cl.userTeacher u JOIN u.role rl WHERE rl.roleName = 'TEACHER' ORDER BY cl.id desc")
     Page<ClassResponse> findAllClass(Pageable pageable);
 
     @Query("SELECT new com.example.managercourse.dto.response.ClassResponse(cl.id, cl.classCode, cl.className, cl.quantityStudent, s.courseName, u.fullName, cl.status) " +
@@ -23,7 +23,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "JOIN cl.course s " +
             "JOIN cl.userTeacher u " +
             "JOIN u.role rl " +
-            "WHERE rl.role = 'TEACHER' AND cl.className LIKE %:className% " +
+            "WHERE rl.roleName = 'TEACHER' AND cl.className LIKE %:className% " +
             "ORDER BY cl.id desc")
     Page<ClassResponse> searchClass(Pageable pageable,@Param("className") String className);
 
@@ -34,7 +34,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
 
     @Query("SELECT new com.example.managercourse.dto.response.ClassDetailResponse(cl.id, cl.classCode, cl.className, cl.requirements, cs.courseName, u.fullName, cl.quantityStudent, cl.status) " +
             "FROM Class cl JOIN cl.course cs JOIN cl.userTeacher u JOIN u.role rl " +
-            "WHERE cl.id = :id AND rl.role = 'TEACHER'")
+            "WHERE cl.id = :id AND rl.roleName = 'TEACHER'")
     ClassDetailResponse detailClass(Integer id);
 
     @Query("SELECT new com.example.managercourse.dto.response.CourseOfStudent(s.subjectCode, s.subjectName, u.fullName, s.learningMode, s.classify, s.numberOfSessions) " +
@@ -64,7 +64,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "JOIN cl.classDetailList cdl " +
             "JOIN cdl.user u " +
             "JOIN u.role rl " +
-            "WHERE rl.role = 'STUDENT' AND u.username = :username")
+            "WHERE rl.roleName = 'STUDENT' AND u.username = :username")
     List<ClassResponse> findAllClassNameOfStudent(@Param("username") String username);
 
     @Query("SELECT new com.example.managercourse.dto.response.StudentOfTeacherResponse(u.fullName, u.phoneNumber, u.email, u.gender, u.address) " +
@@ -72,7 +72,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             "JOIN cl.classDetailList cdl " +
             "JOIN cdl.user u " +
             "JOIN u.role rl " +
-            "WHERE rl.role = 'STUDENT' AND cl.className = :className")
+            "WHERE rl.roleName = 'STUDENT' AND cl.className = :className")
     List<StudentOfTeacherResponse> selectStudentOfTeacher(@Param("className") String className);
 
 }

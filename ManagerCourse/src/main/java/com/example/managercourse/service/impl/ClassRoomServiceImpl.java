@@ -4,9 +4,8 @@ import com.example.managercourse.dto.request.ClassRoomRequest;
 import com.example.managercourse.dto.response.ClassRoomResponse;
 import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.entity.ClassRoom;
-import com.example.managercourse.entity.EmailTemplate;
+import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.ClassRoomRepository;
-import com.example.managercourse.repository.EmailTemplateRepository;
 import com.example.managercourse.service.ClassRoomService;
 import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,12 @@ import java.util.Optional;
 @Service
 public class ClassRoomServiceImpl implements ClassRoomService {
 
+    private final ClassRoomRepository classRoomRepository;
+
     @Autowired
-    private ClassRoomRepository classRoomRepository;
+    public ClassRoomServiceImpl(ClassRoomRepository classRoomRepository) {
+        this.classRoomRepository = classRoomRepository;
+    }
 
     @Override
     public List<ClassRoomResponse> findAllClassRoom(Integer pageNumber, Integer pageSize) {
@@ -42,9 +45,16 @@ public class ClassRoomServiceImpl implements ClassRoomService {
 
     @Override
     public ClassRoomResponse detail(Integer id) {
-        ClassRoom classRoom = classRoomRepository.findById(id).get();
-        return MapperUtil.toDTO(classRoom, ClassRoomResponse.class);
+        Optional<ClassRoom> classRoomOptional = classRoomRepository.findById(id);
+        if (classRoomOptional.isPresent()) {
+            ClassRoom classRoom = classRoomOptional.get();
+            return MapperUtil.toDTO(classRoom, ClassRoomResponse.class);
+        } else {
+            // Handle case when class room is not found
+            throw new NotFoundException("Class room not found for id: " + id);
+        }
     }
+
 
     @Override
     @Transactional

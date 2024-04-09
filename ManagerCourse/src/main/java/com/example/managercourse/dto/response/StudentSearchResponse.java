@@ -29,5 +29,4 @@ public class StudentSearchResponse {
 
     private String courseName;
 
-//    private Integer status;
 }

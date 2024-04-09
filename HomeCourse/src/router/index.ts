@@ -1,5 +1,6 @@
 import Call from '@/views/Call.vue'
 import Home from '@/views/Home.vue'
+import Contact from '@/views/Contact.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -11,9 +12,15 @@ const router = createRouter({
       component: Home
     },
     {
-      path: '/call',
+      path: '/contact',
       name: 'Call',
       component: Call
+    }
+    ,
+    {
+      path: '/dao-tao',
+      name: 'Contact',
+      component: Contact
     }
   ]
 })

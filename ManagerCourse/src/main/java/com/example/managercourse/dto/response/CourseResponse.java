@@ -1,6 +1,5 @@
 package com.example.managercourse.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -30,6 +29,8 @@ public class CourseResponse {
     private String description;
 
     private Integer status;
+
+    private String image;
 
     private List<TeacherOfClassResponse> teacherOfClassResponses;
 }

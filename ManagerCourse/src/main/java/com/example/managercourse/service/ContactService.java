@@ -3,7 +3,6 @@ package com.example.managercourse.service;
 import com.example.managercourse.dto.request.ContactRequest;
 import com.example.managercourse.dto.response.ContactResponse;
 import com.example.managercourse.dto.response.MessageResponse;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 

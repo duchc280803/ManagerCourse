@@ -1,6 +1,5 @@
 package com.example.managercourse.entity;
 
-import com.example.managercourse.enums.SubjectEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +16,7 @@ public class StatusSubject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private SubjectEnum subjectEnum;
+    private String subjectEnum;
 
     @ManyToOne
     @JoinColumn(name = "subject_id")

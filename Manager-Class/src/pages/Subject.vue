@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import Swal from "sweetalert2";
+import { notifyError, notifySuccess } from "@/toast-message/NotifyMessage"
 
 var role = window.localStorage.getItem("role");
 const route = useRoute();
@@ -12,8 +13,8 @@ const idParam = route.params.id;
  * Get list subject
  */
 const listSubject = ref([]);
-var pageNumber = 0;
-var pageSize = 5;
+let pageNumber = 0;
+let pageSize = 5;
 const getListSubjectName = async () => {
   axios
     .get(
@@ -71,6 +72,7 @@ const createSubject = async () => {
         .post(`http://localhost:8080/api/v1/subject/create`, formDataSubject)
         .then(function (response) {
           listSubject.value.push(response.data);
+          notifySuccess("Thêm khóa học thành công")
           getListSubjectName();
           let modal = document.getElementById("subject-add");
           if (modal) {
@@ -86,6 +88,7 @@ const createSubject = async () => {
         })
         .catch(function (error) {
           errorCreateSubject.value = error.response.data;
+          notifyError("Thêm khóa học thất bại!")
         });
     } else {
       Swal.fire({
@@ -199,18 +202,11 @@ function refreshSubject() {
         <div class="row search_table">
           <div class="col-4">
             <div class="input-group-prepend position-relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm"
-                class="form-control search"
-                v-model.trim="search" />
+              <input type="text" placeholder="Tìm kiếm" class="form-control search" v-model.trim="search" />
             </div>
           </div>
           <div class="col-lg-4">
-            <button
-              v-show="role == 'ADMIN'"
-              @click="refreshSubject()"
-              style="
+            <button v-show="role == 'ADMIN'" @click="refreshSubject()" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
@@ -224,11 +220,7 @@ function refreshSubject() {
           </div>
           <div class="col-2"></div>
           <div class="col-2">
-            <button
-              v-show="role == 'ADMIN'"
-              data-bs-toggle="modal"
-              data-bs-target="#subject-add"
-              style="
+            <button v-show="role == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#subject-add" style="
                 text-decoration: none;
                 background-color: #fc6736;
                 border-radius: 5px;
@@ -243,62 +235,53 @@ function refreshSubject() {
         <section class="section-table">
           <table>
             <thead>
-              <tr
-                style="
+              <tr style="
                   background-color: #d5d1defe;
                   height: 52px;
                   text-align: center;
                 ">
                 <th>STT</th>
                 <th>Mã môn</th>
-                <th style="width: 80px">Tên môn</th>
-                <th style="width: 100px">Loại môn</th>
+                <th>Tên môn</th>
+                <th>Loại môn</th>
                 <th>Nội dung</th>
-                <th style="width: 80px">Hình thức</th>
+                <th>Hình thức</th>
                 <th>Số buổi</th>
                 <th v-show="role == 'ADMIN'">Hành động</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(s, index) in listSubject"
-                :key="s.id"
-                style="text-align: center">
+              <tr v-for="(s, index) in listSubject" :key="s.id" style="text-align: center">
                 <td>{{ index + 1 + pageNumber * pageSize }}</td>
                 <td>{{ s.subjectCode }}</td>
                 <td>{{ s.subjectName }}</td>
                 <td>
-                  <span
-                    :style="{
-                      'background-color':
-                        s.classify == 1
-                          ? '#9bcf53'
-                          : s.classify == 2
-                          ? '#00008B' // Đổi từ '#FFC700' thành '#00008B' vì bạn muốn màu xanh đậm
-                          : '#59D5E0',
-                      'border-radius': '5px',
-                      color: s.classify == 1 ? 'darkgreen' : 'white',
-                    }">
+                  <span :style="{
+      'background-color':
+        s.classify == 1
+          ? '#9bcf53'
+          : s.classify == 2
+            ? '#00008B' // Đổi từ '#FFC700' thành '#00008B' vì bạn muốn màu xanh đậm
+            : '#59D5E0',
+      'border-radius': '5px',
+      color: s.classify == 1 ? 'darkgreen' : 'white',
+    }">
                     {{
-                      s.classify == 1
-                        ? "Môn nền tảng"
-                        : s.classify == 2
-                        ? "Môn chuyên sâu"
-                        : "Môn bổ trợ"
-                    }}
+      s.classify == 1
+        ? "Môn nền tảng"
+        : s.classify == 2
+          ? "Môn chuyên sâu"
+          : "Môn bổ trợ"
+    }}
                   </span>
                 </td>
                 <td>{{ s.curriculumContent }}</td>
                 <td>{{ s.learningMode == 1 ? "Online" : "Offline" }}</td>
-                <td >
+                <td>
                   {{ s.numberOfSessions }}
                 </td>
                 <td v-show="role == 'ADMIN'">
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#subject-update"
-                    @click="subjectDetail(s.id)"
-                    style="
+                  <button data-bs-toggle="modal" data-bs-target="#subject-update" @click="subjectDetail(s.id)" style="
                       text-decoration: none;
                       background-color: #fc6736;
                       border-radius: 5px;
@@ -331,27 +314,17 @@ function refreshSubject() {
     </div>
   </div>
   <!-- Modal add-->
-  <div
-    class="modal fade"
-    id="subject-add"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="subject-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg" style="width: 950px; margin-left: -200px">
         <div class="modal-header">
           <h5 class="modal-title">Thêm môn mới</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Mã môn
@@ -360,11 +333,7 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Mã môn..."
-                    v-model="subjectCode"
+                  <input type="text" class="form-control an-select" placeholder="Mã môn..." v-model="subjectCode"
                     disabled />
                 </div>
               </div>
@@ -377,15 +346,11 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Tên môn..."
-                    v-model="subjectName" />
+                  <input type="text" class="form-control an-select" placeholder="Tên môn..." v-model="subjectName" />
                 </div>
                 <span style="color: red">{{
-                  errorCreateSubject.subjectName
-                }}</span>
+      errorCreateSubject.subjectName
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -396,15 +361,12 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <textarea
-                    type="number"
-                    class="form-control an-select"
-                    placeholder="Nội dung..."
+                  <textarea type="number" class="form-control an-select" placeholder="Nội dung..."
                     v-model="curriculumContent"></textarea>
                 </div>
                 <span style="color: red">{{
-                  errorCreateSubject.curriculumContent
-                }}</span>
+      errorCreateSubject.curriculumContent
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -415,18 +377,15 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="learningMode">
+                  <select class="form-select" aria-label="Default select example" v-model="learningMode">
                     <option value="" disabled>Chọn hình thức học</option>
                     <option :value="1">Online</option>
                     <option :value="2">Offline</option>
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorCreateSubject.learningMode
-                }}</span>
+      errorCreateSubject.learningMode
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -437,19 +396,17 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="classify">
+                  <select class="form-select" aria-label="Default select example" v-model="classify">
                     <option value="" disabled>Chọn loại môn</option>
-                    <option :value="1">Môn nền tảng</option>
-                    <option :value="2">Môn chuyên sâu</option>
-                    <option :value="3">Môn bổ trợ</option>
+                    <option :value="1">Môn cơ bản</option>
+                    <option :value="2">Môn sql</option>
+                    <option :value="3">Môn cấu trúc dữ liệu</option>
+                    <option :value="4">Môn chuyên sâu</option>
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorCreateSubject.classify
-                }}</span>
+      errorCreateSubject.classify
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -459,28 +416,19 @@ function refreshSubject() {
                 </div>
               </div>
               <div class="col-7">
-                <input
-                  type="number"
-                  class="form-control an-select"
-                  v-model="numberOfSessions" placeholder="Số buổi"/>
+                <input type="number" class="form-control an-select" v-model="numberOfSessions" placeholder="Số buổi" />
                 <span style="color: red">{{
-                  errorCreateSubject.numberOfSessions
-                }}</span>
+      errorCreateSubject.numberOfSessions
+    }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="createSubject()">
+          <button type="button" class="btn btn-primary" @click="createSubject()">
             Lưu
           </button>
         </div>
@@ -488,27 +436,17 @@ function refreshSubject() {
     </div>
   </div>
   <!-- Modal update-->
-  <div
-    class="modal fade"
-    id="subject-update"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="subject-update" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content lg" style="width: 950px; margin-left: -200px">
         <div class="modal-header">
           <h5 class="modal-title">Update môn</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row m-auto">
-            <div
-              class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
+            <div class="col-12 row mb-5 m-0 p-0 mb_24 justify-content-around ng-star-inserted">
               <div class="col-4 ctrl_label">
                 <div>
                   Mã môn
@@ -517,12 +455,8 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Mã môn..."
-                    v-model="subjectUpdate.subjectCode"
-                    disabled />
+                  <input type="text" class="form-control an-select" placeholder="Mã môn..."
+                    v-model="subjectUpdate.subjectCode" disabled />
                 </div>
               </div>
               <div class="pap"></div>
@@ -534,15 +468,12 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <input
-                    type="text"
-                    class="form-control an-select"
-                    placeholder="Tên môn..."
+                  <input type="text" class="form-control an-select" placeholder="Tên môn..."
                     v-model="subjectUpdate.subjectName" />
                 </div>
                 <span style="color: red">{{
-                  errorUpdateSubject.subjectName
-                }}</span>
+      errorUpdateSubject.subjectName
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -553,15 +484,12 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <textarea
-                    type="number"
-                    class="form-control an-select"
-                    placeholder="Nội dung..."
+                  <textarea type="number" class="form-control an-select" placeholder="Nội dung..."
                     v-model="subjectUpdate.curriculumContent"></textarea>
                 </div>
                 <span style="color: red">{{
-                  errorUpdateSubject.curriculumContent
-                }}</span>
+      errorUpdateSubject.curriculumContent
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -572,18 +500,15 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="subjectUpdate.learningMode">
+                  <select class="form-select" aria-label="Default select example" v-model="subjectUpdate.learningMode">
                     <option value="" disabled>Chọn hình thức học</option>
                     <option :value="1">Online</option>
                     <option :value="2">Offline</option>
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorUpdateSubject.learningMode
-                }}</span>
+      errorUpdateSubject.learningMode
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -594,10 +519,7 @@ function refreshSubject() {
               </div>
               <div class="col-7">
                 <div>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="subjectUpdate.classify">
+                  <select class="form-select" aria-label="Default select example" v-model="subjectUpdate.classify">
                     <option value="" disabled>Chọn loại môn</option>
                     <option :value="1">Môn nền tảng</option>
                     <option :value="2">Môn chuyên sâu</option>
@@ -605,8 +527,8 @@ function refreshSubject() {
                   </select>
                 </div>
                 <span style="color: red">{{
-                  errorUpdateSubject.classify
-                }}</span>
+      errorUpdateSubject.classify
+    }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -616,28 +538,20 @@ function refreshSubject() {
                 </div>
               </div>
               <div class="col-7">
-                <input
-                  type="number"
-                  class="form-control an-select"
-                  v-model="subjectUpdate.numberOfSessions" placeholder="Số buổi"/>
+                <input type="number" class="form-control an-select" v-model="subjectUpdate.numberOfSessions"
+                  placeholder="Số buổi" />
                 <span style="color: red">{{
-                  errorUpdateSubject.numberOfSessions
-                }}</span>
+      errorUpdateSubject.numberOfSessions
+    }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Hủy
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="updateSubject(subjectUpdate.id)">
+          <button type="button" class="btn btn-primary" @click="updateSubject(subjectUpdate.id)">
             Lưu
           </button>
         </div>
@@ -649,17 +563,21 @@ function refreshSubject() {
 * {
   font-family: BaiJamjuree !important;
 }
+
 * {
   font-family: BaiJamjuree !important;
 }
+
 .card.border {
   box-shadow: 0 0 30px #523f690d;
   border: 1px solid #523f690d;
   border-radius: 20px;
 }
+
 .search_table {
   margin: 0;
 }
+
 .card.subject {
   border-radius: 40px;
   background-position: center;
@@ -667,46 +585,59 @@ function refreshSubject() {
   overflow: hidden;
   background-color: burlywood;
 }
+
 span.subject-code {
   margin: 5px;
   font-size: 16px;
   font-weight: 600;
 }
+
 span.subject-name {
   margin: 5px;
   font-size: 16px;
   font-weight: 600;
 }
+
 a.router-link-active {
   text-decoration: none;
   color: black;
 }
+
 tr {
   height: 80px;
 }
+
 table {
   width: 100%;
 }
+
 .section-table {
- 
+
   background-color: #fffb;
   margin: 0.8rem auto;
   border-radius: 0.6rem;
   overflow: hidden;
 }
+
 td {
   padding-left: 5px;
-  width: 50px;
   height: 50px;
-  background-color: #f0f0f0; /* Màu nền của ô */
-  border: 1px solid #ccc; /* Đường viền */
-  border-radius: 10px; /* Góc bo */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+  background-color: #f0f0f0;
+  /* Màu nền của ô */
+  border: 1px solid #ccc;
+  /* Đường viền */
+  border-radius: 10px;
+  /* Góc bo */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* Đổ bóng */
 }
+
 tr {
   height: 54px;
 }
+
 .pap {
   padding-top: 20px;
 }
+
 </style>

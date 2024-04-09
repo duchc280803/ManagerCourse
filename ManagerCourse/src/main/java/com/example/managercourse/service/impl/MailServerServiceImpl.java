@@ -6,11 +6,8 @@ import com.example.managercourse.entity.EmailServer;
 import com.example.managercourse.repository.MailServerRepository;
 import com.example.managercourse.service.MailServerService;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +16,12 @@ import java.util.Properties;
 @Service
 public class MailServerServiceImpl implements MailServerService {
 
-    @Autowired
-    private MailServerRepository mailServerRepository;
+    private final MailServerRepository mailServerRepository;
 
     @Autowired
-    private JavaMailSender javaMailSender;
+    public MailServerServiceImpl(MailServerRepository mailServerRepository) {
+        this.mailServerRepository = mailServerRepository;
+    }
 
     @Override
     public boolean sendEmail(Long id) {
@@ -71,11 +69,6 @@ public class MailServerServiceImpl implements MailServerService {
                 .build();
         mailServerRepository.save(emailServer);
         return MessageResponse.builder().message("OK").build();
-    }
-
-    public static void sendEmail(String to, String subject) {
-
-
     }
 
 }

@@ -7,12 +7,10 @@ import com.example.managercourse.entity.*;
 import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.CourseService;
-import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,25 +18,34 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+
+    private final UserRepository userRepository;
+
+    private final CourseDetailRepository courseDetailRepository;
+
+    private final SubjectDetailRepository subjectDetailRepository;
+
+    private final SubjectRepository subjectRepository;
+
+    private static final String COURSE_NOT_FOUND_MESSAGE = "Course not found with id: %d";
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CourseDetailRepository courseDetailRepository;
-
-    @Autowired
-    private SubjectDetailRepository subjectDetailRepository;
-
-    @Autowired
-    private SubjectRepository subjectRepository;
+    public CourseServiceImpl(CourseRepository courseRepository,
+                             UserRepository userRepository,
+                             CourseDetailRepository courseDetailRepository,
+                             SubjectDetailRepository subjectDetailRepository,
+                             SubjectRepository subjectRepository) {
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+        this.courseDetailRepository = courseDetailRepository;
+        this.subjectDetailRepository = subjectDetailRepository;
+        this.subjectRepository = subjectRepository;
+    }
 
     @Override
     public List<CourseResponse> showCourse(Integer pageNumber, Integer pageSize) {
@@ -66,6 +73,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<TeacherOfClassResponse> fillTeacherByCourse(String courseName) {
+        return userRepository.fillTeacherByCourse(courseName);
+    }
+
+    @Override
     @Transactional
     public MessageResponse createCourse(CourseRequest courseRequest) {
         Course course = Course.builder()
@@ -76,6 +88,7 @@ public class CourseServiceImpl implements CourseService {
                 .description(courseRequest.getDescription())
                 .status(1)
                 .scheduled(courseRequest.getScheduled())
+                .image(courseRequest.getImage())
                 .build();
         courseRepository.save(course);
 
@@ -105,14 +118,15 @@ public class CourseServiceImpl implements CourseService {
         return courseResponseList;
     }
 
+
     @Override
     public CourseDetailResponse detailCourse(Integer id) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(String.format(COURSE_NOT_FOUND_MESSAGE, id)));
 
         List<String> teacherNames = course.getCourseDetailList().stream()
                 .map(courseDetail -> courseDetail.getUser().getFullName())
-                .collect(Collectors.toList());
+                .toList();
 
         return CourseDetailResponse.builder()
                 .id(course.getId())
@@ -123,6 +137,7 @@ public class CourseServiceImpl implements CourseService {
                 .scheduled(course.getScheduled())
                 .status(course.getStatus())
                 .nameTeacher(teacherNames)
+                .image(course.getImage())
                 .build();
     }
 
@@ -137,6 +152,7 @@ public class CourseServiceImpl implements CourseService {
         course.setDescription(courseRequest.getDescription());
         course.setStatus(courseRequest.getStatus());
         course.setScheduled(courseRequest.getScheduled());
+        course.setImage(courseRequest.getImage());
         courseRepository.save(course);
         for (String teacherName : courseRequest.getNameTeacher()) {
             User user = userRepository.findByFullName(teacherName)
@@ -162,21 +178,24 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public MessageResponse addSubjectToCourse(SubjectAddCourseRequest subjectAddCourseRequest, Integer id) {
-        Course course = courseRepository.findById(id).get();
+        Optional<Course> optionalCourse = courseRepository.findById(id);
+        if (optionalCourse.isPresent()) {
+            Course course = optionalCourse.get();
 
-        List<Subject> subjectList = subjectRepository.findAllById(subjectAddCourseRequest.getSelectedSubjectIds());
-        subjectList.forEach(subject -> {
-            SubjectDetail SubjectDetail = com.example.managercourse.entity
-                    .SubjectDetail
-                    .builder()
-                    .course(course)
-                    .subject(subject)
-                    .build();
-            subjectDetailRepository.save(SubjectDetail);
-        });
-        return MessageResponse.builder().message("Thêm thành công").build();
+            List<Subject> subjectList = subjectRepository.findAllById(subjectAddCourseRequest.getSelectedSubjectIds());
+            subjectList.forEach(subject -> {
+                SubjectDetail subjectDetail = SubjectDetail.builder()
+                        .course(course)
+                        .subject(subject)
+                        .build();
+                subjectDetailRepository.save(subjectDetail);
+            });
+
+            return MessageResponse.builder().message("Thêm thành công").build();
+        } else {
+            throw new NotFoundException("Course not found with id: " + id);
+        }
     }
-
 
     private CourseResponse courseResponse(Course course, List<TeacherOfClassResponse> teacherOfClassResponses, int count) {
         CourseResponse courseResponse = new CourseResponse();
@@ -188,6 +207,7 @@ public class CourseServiceImpl implements CourseService {
         courseResponse.setQuantitySubject(count);
         courseResponse.setScheduled(course.getScheduled());
         courseResponse.setStatus(course.getStatus());
+        courseResponse.setImage(course.getImage());
         courseResponse.setTeacherOfClassResponses(teacherOfClassResponses);
         return courseResponse;
     }

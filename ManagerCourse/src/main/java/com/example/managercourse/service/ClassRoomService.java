@@ -1,6 +1,5 @@
 package com.example.managercourse.service;
 
-import com.example.managercourse.dto.request.ClassRequest;
 import com.example.managercourse.dto.request.ClassRoomRequest;
 import com.example.managercourse.dto.response.ClassRoomResponse;
 import com.example.managercourse.dto.response.MessageResponse;

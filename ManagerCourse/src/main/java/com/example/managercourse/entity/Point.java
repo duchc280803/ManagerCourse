@@ -18,7 +18,7 @@ public class Point {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private BigDecimal point;
+    private BigDecimal pointName;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

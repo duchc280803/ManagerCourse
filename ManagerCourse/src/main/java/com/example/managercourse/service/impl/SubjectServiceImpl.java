@@ -7,6 +7,7 @@ import com.example.managercourse.dto.response.SubjectResponse;
 import com.example.managercourse.dto.response.SubjectUpdateResponse;
 import com.example.managercourse.entity.Schedule;
 import com.example.managercourse.entity.Subject;
+import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.ClassRepository;
 import com.example.managercourse.repository.ScheduleRepository;
 import com.example.managercourse.repository.SubjectRepository;
@@ -15,6 +16,7 @@ import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +25,15 @@ import java.util.*;
 @Service
 public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+    private final SubjectRepository subjectRepository;
+
+    private final ScheduleRepository scheduleRepository;
 
     @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private ScheduleRepository scheduleRepository;
+    public SubjectServiceImpl(SubjectRepository subjectRepository, ScheduleRepository scheduleRepository) {
+        this.subjectRepository = subjectRepository;
+        this.scheduleRepository = scheduleRepository;
+    }
 
     @Override
     public List<SubjectResponse> getListSubjectName(Integer pageNumber, Integer pageSize) {
@@ -39,9 +42,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getListSubjectByCourse(Integer pageNumber, Integer pageSize, Integer id) {
+    public List<SubjectResponse> getListSubjectByCourse(Integer pageNumber, Integer pageSize, Integer id, Integer classify) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return subjectRepository.getListSubjectByCourse(pageable, id).getContent();
+        return subjectRepository.getListSubjectByCourse(pageable, id, classify).getContent();
     }
 
     @Transactional
@@ -62,8 +65,14 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectUpdateResponse subjectDetail(Integer id) {
-        Optional<Subject> subject = subjectRepository.findById(id);
-        return MapperUtil.toDTO(subject.get(), SubjectUpdateResponse.class);
+        Optional<Subject> subjectOptional = subjectRepository.findById(id);
+        if (subjectOptional.isPresent()) {
+            Subject subject = subjectOptional.get();
+            return MapperUtil.toDTO(subject, SubjectUpdateResponse.class);
+        } else {
+            // Handle case when subject is not found
+            throw new NotFoundException("Subject not found for id: " + id);
+        }
     }
 
     @Transactional
@@ -115,7 +124,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getListSubjectForClass_Subject_Schedule(Integer idClass) {
+    public List<SubjectResponse> getListSubjectForClassSubjectSchedule(Integer idClass) {
         // Lấy danh sách tất cả các môn học của lớp
         List<SubjectResponse> subjectList = subjectRepository.getListSubjectByClass1(idClass);
 

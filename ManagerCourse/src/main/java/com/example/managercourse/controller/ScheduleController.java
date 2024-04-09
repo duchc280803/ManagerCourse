@@ -20,8 +20,12 @@ import java.util.List;
 @RequestMapping("/api/v1/schedule/")
 public class ScheduleController {
 
+    private final ScheduleServiceImpl scheduleService;
+    
     @Autowired
-    private ScheduleServiceImpl scheduleService;
+    public ScheduleController(ScheduleServiceImpl scheduleService) {
+        this.scheduleService = scheduleService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<ScheduleResponse>> findAllSchedule(

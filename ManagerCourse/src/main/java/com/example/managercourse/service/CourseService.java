@@ -1,11 +1,8 @@
 package com.example.managercourse.service;
 
 import com.example.managercourse.dto.request.CourseRequest;
-import com.example.managercourse.dto.request.StudentAddClassRequest;
 import com.example.managercourse.dto.request.SubjectAddCourseRequest;
 import com.example.managercourse.dto.response.*;
-import com.example.managercourse.entity.Course;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,6 +13,8 @@ public interface CourseService {
     List<CourseOfTeacherResponse> findByCourseName();
 
     List<TeacherOfClassResponse> fillTeacher();
+
+    List<TeacherOfClassResponse> fillTeacherByCourse(String courseName);
 
     MessageResponse createCourse(CourseRequest courseRequest);
 

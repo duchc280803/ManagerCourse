@@ -16,11 +16,11 @@ import java.util.List;
 @Builder
 public class UserCustomDetail implements UserDetails {
 
-    private User user;
+    private transient User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().getRole()));
+        return List.of(new SimpleGrantedAuthority(user.getRole().getRoleName()));
     }
 
     @Override

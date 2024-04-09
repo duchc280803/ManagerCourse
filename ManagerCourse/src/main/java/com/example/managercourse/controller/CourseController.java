@@ -1,10 +1,8 @@
 package com.example.managercourse.controller;
 
 import com.example.managercourse.dto.request.CourseRequest;
-import com.example.managercourse.dto.request.StudentAddClassRequest;
 import com.example.managercourse.dto.request.SubjectAddCourseRequest;
 import com.example.managercourse.dto.response.*;
-import com.example.managercourse.entity.Course;
 import com.example.managercourse.service.impl.CourseServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,12 @@ import java.util.List;
 @RequestMapping("/api/v1/course/")
 public class CourseController {
 
+    private final CourseServiceImpl courseService;
+
     @Autowired
-    private CourseServiceImpl courseService;
+    public CourseController(CourseServiceImpl courseService) {
+        this.courseService = courseService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<CourseResponse>> showCourse(
@@ -38,6 +40,13 @@ public class CourseController {
     @GetMapping("fill-teacher")
     public ResponseEntity<List<TeacherOfClassResponse>> fillTeacher() {
         return new ResponseEntity<>(courseService.fillTeacher(), HttpStatus.OK);
+    }
+
+    @GetMapping("fill-teacher-for-course")
+    public ResponseEntity<List<TeacherOfClassResponse>> fillTeacherByCourse(
+            @RequestParam("courseName") String courseName
+    ) {
+        return new ResponseEntity<>(courseService.fillTeacherByCourse(courseName), HttpStatus.OK);
     }
 
     @PostMapping("create")

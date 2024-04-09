@@ -17,8 +17,12 @@ import java.util.List;
 @RequestMapping("/api/v1/student/")
 public class StudentController {
 
+    private final StudentServiceImpl studentService;
+
     @Autowired
-    private StudentServiceImpl studentService;
+    public StudentController(StudentServiceImpl studentService) {
+        this.studentService = studentService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<StudentResponse>> showListStudent(

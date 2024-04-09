@@ -25,14 +25,20 @@ import java.util.Optional;
 @Service
 public class PointServiceImpl implements PointService {
 
-    @Autowired
-    private PointRepository pointRepository;
+    private final PointRepository pointRepository;
+
+    private final UserRepository userRepository;
+
+    private final SubjectRepository subjectRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SubjectRepository subjectRepository;
+    public PointServiceImpl(PointRepository pointRepository,
+                            UserRepository userRepository,
+                            SubjectRepository subjectRepository) {
+        this.pointRepository = pointRepository;
+        this.userRepository = userRepository;
+        this.subjectRepository = subjectRepository;
+    }
 
     @Override
     public List<PointBySubjectResponse> selectPointStudent(String username, String course) {
@@ -62,7 +68,7 @@ public class PointServiceImpl implements PointService {
         Point point = new Point();
         point.setUser(userOptional.get());
         point.setSubject(subjectOptional.get());
-        point.setPoint(postPointRequest.getPoint());
+        point.setPointName(postPointRequest.getPoint());
         try {
             pointRepository.save(point);
             return MessageResponse.builder().message("OK").build();
@@ -78,9 +84,9 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public MessageResponse UpdatePoint(Integer idPoint, PostPointRequest postPointRequest) {
+    public MessageResponse updatePoint(Integer idPoint, PostPointRequest postPointRequest) {
         Point point = pointRepository.findById(idPoint).get();
-        point.setPoint(postPointRequest.getPoint());
+        point.setPointName(postPointRequest.getPoint());
         pointRepository.save(point);
         return MessageResponse.builder().message("OK").build();
     }

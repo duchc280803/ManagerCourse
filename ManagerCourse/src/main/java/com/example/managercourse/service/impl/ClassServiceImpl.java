@@ -8,47 +8,49 @@ import com.example.managercourse.entity.Class;
 import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.ClassService;
-import com.example.managercourse.util.JavaMailSenderUtl;
-import com.example.managercourse.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ClassServiceImpl implements ClassService {
 
-    @Autowired
-    private ClassRepository classRepository;
+    private final ClassRepository classRepository;
+
+    private final UserRepository userRepository;
+
+    private final CourseRepository courseRepository;
+
+    private final ClassDetailRepository classDetailRepository;
+
+    private final EmailTemplateRepository emailTemplateRepository;
+
+    private final MailServerRepository mailServerRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private ClassDetailRepository classDetailRepository;
-
-    @Autowired
-    private EmailTemplateRepository emailTemplateRepository;
-
-    @Autowired
-    private JavaMailSenderImpl javaMailSender;
-
-    @Autowired
-    private MailServerRepository mailServerRepository;
+    public ClassServiceImpl(
+            ClassRepository classRepository,
+            UserRepository userRepository,
+            CourseRepository courseRepository,
+            ClassDetailRepository classDetailRepository,
+            EmailTemplateRepository emailTemplateRepository,
+            MailServerRepository mailServerRepository
+    ) {
+        this.classRepository = classRepository;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.classDetailRepository = classDetailRepository;
+        this.emailTemplateRepository = emailTemplateRepository;
+        this.mailServerRepository = mailServerRepository;
+    }
 
     @Override
     public List<ClassResponse> getClassResponseList(Integer pageNumber, Integer pageSize) {
@@ -166,11 +168,6 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public List<ClassResponse> findAllClassName() {
         return classRepository.findAllClassName();
-    }
-
-    @Override
-    public List<ClassResponse> findAllClassNameForStudent(String username) {
-        return classRepository.findAllClassNameForStudent(username);
     }
 
     @Override

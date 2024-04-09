@@ -17,16 +17,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth/")
 public class AuthController {
 
+    private final AuthServiceImpl authService;
+
     @Autowired
-    private AuthServiceImpl authService;
+    public AuthController(AuthServiceImpl authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("login")
-    private ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("register")
-    private ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         if (authService.findByUsername(registerRequest.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body(MessageResponse.builder().message("Username already exits").build());
         }
@@ -37,12 +41,12 @@ public class AuthController {
     }
 
     @GetMapping("fill-personal")
-    private ResponseEntity<PersonalResponse> fillPersonal(@RequestParam(name = "username") String username) {
+    public ResponseEntity<PersonalResponse> fillPersonal(@RequestParam(name = "username") String username) {
         return new ResponseEntity<>(authService.fillPersonal(username), HttpStatus.OK);
     }
 
     @PutMapping("update-personal/{username}")
-    private ResponseEntity<MessageResponse> updatePersonal(
+    public ResponseEntity<MessageResponse> updatePersonal(
             @PathVariable(name = "username") String username,
             @Valid @RequestBody PersonalRequest personalRequest
     ) {

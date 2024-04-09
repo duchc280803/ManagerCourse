@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "user")
 public class User {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -47,7 +48,6 @@ public class User {
 
     private String email;
 
-    @Column(name = "status")
     private Integer status;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

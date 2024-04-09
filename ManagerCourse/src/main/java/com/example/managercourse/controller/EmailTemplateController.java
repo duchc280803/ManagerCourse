@@ -14,8 +14,12 @@ import java.util.List;
 @RequestMapping("/api/v1/templates/")
 public class EmailTemplateController {
 
+    private final EmailTemplateServiceImpl emailTemplateService;
+
     @Autowired
-    private EmailTemplateServiceImpl emailTemplateService;
+    public EmailTemplateController(EmailTemplateServiceImpl emailTemplateService) {
+        this.emailTemplateService = emailTemplateService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<EmailTemplate>> getAllEmailTemplate() {

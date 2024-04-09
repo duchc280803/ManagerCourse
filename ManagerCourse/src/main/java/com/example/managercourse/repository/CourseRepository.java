@@ -28,7 +28,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "JOIN cd.user u " +
             "JOIN cd.course cs " +
             "JOIN u.role rl " +
-            "WHERE rl.role = 'TEACHER' AND cs.id = :id")
+            "WHERE rl.roleName = 'TEACHER' AND cs.id = :id")
     List<TeacherOfClassResponse> getTeacherOfClass(@Param("id") Integer id);
 
     Course findByCourseName(String courseName);

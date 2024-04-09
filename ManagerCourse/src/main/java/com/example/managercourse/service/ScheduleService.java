@@ -5,7 +5,6 @@ import com.example.managercourse.dto.request.ScheduleUpdateRequest;
 import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.dto.response.ScheduleDetailResponse;
 import com.example.managercourse.dto.response.ScheduleResponse;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalTime;
 import java.util.List;

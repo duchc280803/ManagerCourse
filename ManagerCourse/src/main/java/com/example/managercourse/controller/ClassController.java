@@ -3,7 +3,6 @@ package com.example.managercourse.controller;
 import com.example.managercourse.dto.request.ClassRequest;
 import com.example.managercourse.dto.request.StudentAddClassRequest;
 import com.example.managercourse.dto.response.*;
-import com.example.managercourse.entity.Class;
 import com.example.managercourse.service.impl.ClassServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,12 @@ import java.util.List;
 @RequestMapping("/api/v1/class/")
 public class ClassController {
 
+    private final ClassServiceImpl classService;
+
     @Autowired
-    private ClassServiceImpl classService;
+    public ClassController(ClassServiceImpl classService) {
+        this.classService = classService;
+    }
 
     @GetMapping("show")
     public ResponseEntity<List<ClassResponse>> findAllClass(

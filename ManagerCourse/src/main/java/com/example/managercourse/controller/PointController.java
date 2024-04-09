@@ -17,8 +17,12 @@ import java.util.List;
 @RequestMapping("/api/v1/point/")
 public class PointController {
 
+    private final PointServiceImpl studyPointService;
+
     @Autowired
-    private PointServiceImpl studyPointService;
+    public PointController(PointServiceImpl studyPointService) {
+        this.studyPointService = studyPointService;
+    }
 
     @GetMapping("select-point-student")
     public ResponseEntity<List<PointBySubjectResponse>> selectPointStudent(
@@ -53,7 +57,7 @@ public class PointController {
             @RequestBody PostPointRequest postPointRequest
 
     ) {
-        return new ResponseEntity<>(studyPointService.UpdatePoint(idPoint, postPointRequest), HttpStatus.OK);
+        return new ResponseEntity<>(studyPointService.updatePoint(idPoint, postPointRequest), HttpStatus.OK);
     }
 
     @GetMapping("select-point-for-user")

@@ -1,210 +1,286 @@
-<script setup>
-import { ref } from "vue";
-import axios from "axios";
-
-const fullName = ref("");
-const phoneNumber = ref("");
-const email = ref("");
-const message = ref("");
-
-// selectContact();
-
-const createContact = async () => {
-  const contactData = {
-    fullName: fullName.value,
-    phoneNumber: phoneNumber.value,
-    email: email.value,
-    message: message.value,
-  };
-  axios
-    .post(`http://localhost:8080/api/v1/contact/create`, contactData)
-    .then(function (response) {
-      let modal = document.getElementById("exampleModal");
-      if (modal) {
-        modal.classList.remove("show");
-        modal.setAttribute("aria-hidden", "true");
-        modal.style.display = "none";
-        let modalBackdrop =
-          document.getElementsByClassName("modal-backdrop")[0];
-        if (modalBackdrop) {
-          modalBackdrop.parentNode.removeChild(modalBackdrop);
-        }
-      }
-    });
-};
-</script>
 <template>
-  <header>
-    <div class="full-width-header home8-style4 main-home">
-      <div class="menu-area sticky">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-2">
-              <div class="logo">
-                <img
-                  src="https://static.topcv.vn/company_logos/YjF8IUn9DGHx3HGzTUPki8DycZsRRqLA_1661485501____8e43ee2aad361f320c7d0a13becc6a92.png"
-                  alt="" srcset="" style="width: 100px; margin-top: 15px" />
-              </div>
-            </div>
-            <div class="col-lg-8 text-right">
-              <div class="rs-menu-area">
-                <div class="main-menu">
-                  <nav class="rs-menu rs-menu-close">
-                    <ul class="nav-menu" id="lst-menu-item">
-                      <RouterLink to="/home">
-                        <li class="current-menu-item">
-                          <a href="/">Home</a>
-                        </li>
-                      </RouterLink>
-                      <RouterLink to="/call">
-                        <li id="header_menu-parent">
-                          <a href="/home/contact">Liên hệ</a>
-                        </li>
-                      </RouterLink>
-                    </ul>
-                    <!-- //.nav-menu -->
-                  </nav>
-                </div>
-                <!-- //.main-menu -->
-              </div>
-            </div>
-            <div class="col-lg-2">
-              <button class="readon orange-btn main-home d-none d-xl-block" data-bs-toggle="modal"
-                data-bs-target="#exampleModal">Liên hệ ngay</button>
-            </div>
+  <header id="header" class="header has-sticky sticky-jump">
+    <div class="header-wrapper">
+      <div id="masthead" class="header-main ">
+        <div class="header-inner flex-row container logo-left" role="navigation">
+
+          <!-- Logo -->
+          <div id="logo" class="flex-col logo">
+
+            <!-- Header logo -->
+            <a href="https://fsoft-academy.edu.vn/" title="FPT Software Academy - FPT Software Academy" rel="home">
+              <img width="124" height="49"
+                src="https://static.topcv.vn/company_logos/YjF8IUn9DGHx3HGzTUPki8DycZsRRqLA_1661485501____8e43ee2aad361f320c7d0a13becc6a92.png"
+                class="header_logo header-logo" alt="FPT Software Academy"></a>
+          </div>
+          <div class="flex-col show-for-medium flex-left">
+            <ul class="mobile-nav nav nav-left ">
+            </ul>
+          </div>
+
+          <!-- Left Elements -->
+          <div class="flex-col hide-for-medium flex-left
+            flex-grow">
+            <ul class="header-nav header-nav-main nav nav-left  nav-line-bottom nav-uppercase">
+            </ul>
+          </div>
+
+          <!-- Right Elements -->
+          <div class="flex-col hide-for-medium flex-right">
+            <ul class="header-nav header-nav-main nav nav-right  nav-line-bottom nav-uppercase">
+              <li id="menu-item-533"
+                class="menu-item menu-item-type-post_type menu-item-object-page menu-item-533 menu-item-design-default">
+                <RouterLink to="home">
+                  <a href="https://fsoft-academy.edu.vn/gioi-thieu/" class="nav-top-link">Trang chủ</a>
+                </RouterLink>
+              </li>
+              <li id="menu-item-298"
+                class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-258 current_page_item menu-item-298 active menu-item-design-default">
+                <RouterLink to="dao-tao"><a href="https://fsoft-academy.edu.vn/dao-tao-mo-rong/" aria-current="page"
+                    class="nav-top-link">Đào
+                    tạo
+                    mở rộng</a>
+                </RouterLink>
+              </li>
+              <li id="menu-item-772"
+                class="menu-item menu-item-type-post_type menu-item-object-page menu-item-772 menu-item-design-default">
+                <RouterLink to="contact">
+                  <a href="https://fsoft-academy.edu.vn/lien-he/" class="nav-top-link">Liên hệ</a>
+                </RouterLink>
+              </li>
+            </ul>
+          </div>
+          <div class="flex-col show-for-medium flex-right">
+            <ul class="mobile-nav nav nav-right ">
+              <li class="nav-icon has-icon">
+                <a href="#" data-open="#main-menu" data-pos="left" data-bg="main-menu-overlay" data-color=""
+                  class="is-small" aria-label="Menu" aria-controls="main-menu" aria-expanded="false">
+
+                  <i class="icon-menu"></i>
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
+        <div class="container">
+          <div class="top-divider full-width"></div>
+        </div>
+      </div>
+
+      <div class="header-bg-container fill">
+        <div class="header-bg-image fill"></div>
+        <div class="header-bg-color fill"></div>
       </div>
     </div>
   </header>
-  <div class="main-conte  nt">
-    <RouterView></RouterView>
-  </div>
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Để lại thông tin tại đây</h5>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="" class="form-label">Họ và tên</label>
-            <input type="text" class="form-control" placeholder="Họ và tên ..." v-model="fullName" />
-          </div>
-          <div class="form-group">
-            <label for="" class="form-label">Số điện thoại</label>
-            <input type="text" class="form-control" placeholder="Số điện thoại ..." v-model="phoneNumber" />
-          </div>
-          <div class="form-group">
-            <label for="" class="form-label">Email</label>
-            <input type="text" class="form-control" placeholder="Email ..." v-model="email" />
-          </div>
-          <div class="form-group">
-            <label for="" class="form-label">Lời nhắn</label>
-            <textarea class="form-control" placeholder="Lời nhắn ..." v-model="message"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" @click="createContact()">Send</button>
-        </div>
-      </div>
+  <div style="background: #f9f8f8;">
+    <div class="container img">
+      <img class="banner-img" alt="ok"
+        src="https://aptech.fpt.edu.vn/wp-content/uploads/2023/12/HB-12-NAM-DEN-SACH-2024-Banner-web-destop.jpg">
     </div>
+    <RouterView></RouterView>
   </div>
 </template>
 <style scoped>
-header {
+.header {
+  background-position: 50% 0;
+  background-size: cover;
   position: fixed;
+  /* Sử dụng position: fixed để giữ header ở một vị trí cố định trên màn hình */
   top: 0;
-  left: 0;
+  /* Header sẽ được giữ ở đầu trang */
   width: 100%;
-  background-color: #ffffff;
-  z-index: 1000;
+  z-index: 30;
+  transition: background-color .3s, opacity .3s;
 }
 
-.full-width-header.home8-style4.main-home {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.full-width-header.home8-style4.main-home .menu-area {
+.header-main {
   height: 90px;
-  background: #c4e4ff;
+  z-index: 9999;
+  background: #fff;
+  position: relative;
+  z-index: 10;
 }
 
-nav ul {
-  float: left;
+.header .flex-row {
+  height: 100%;
 }
 
-nav ul li {
-  display: inline-block;
-  line-height: 80px;
-  margin: 0.5px;
-  margin-right: 50px;
+.header .flex-row {
+  height: 100%;
 }
 
-nav ul li a {
-  text-transform: uppercase;
+.container-width,
+.full-width .ubermenu-nav,
+.container,
+.row {
+  max-width: 1170px;
 }
 
-.rs-menu-area {
-  display: flex;
+.flex-row {
   align-items: center;
-  justify-content: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  width: 100%;
 }
 
-li.current-menu-item a {
-  color: #ff5421 !important;
-  padding-right: 18px;
-  font-size: 16px;
-  font-weight: 700;
+.container,
+.container-width,
+.full-width .ubermenu-nav,
+.row {
+  max-width: 1080px;
+}
+
+.container,
+.container-width,
+.full-width .ubermenu-nav,
+.row,
+body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+#logo {
+  width: 200px;
+}
+
+.logo-left .logo {
+  margin-left: 0;
+  margin-right: 30px;
+}
+
+.logo {
+  line-height: 1;
+  margin: 0;
+}
+
+.flex-col {
+  max-height: 100%;
+}
+
+.logo a {
+  color: #446084;
+  display: block;
+  font-size: 32px;
+  font-weight: bolder;
+  margin: 0;
+  text-decoration: none;
   text-transform: uppercase;
 }
 
-li#header_menu-parent a {
-  color: black !important;
-  padding-right: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  text-transform: uppercase;
+#logo img {
+  max-height: 90px;
 }
 
-.readon.orange-btn {
-  color: #ffffff;
-  background: #ff5421;
-  border-color: #ff5421;
-  border-radius: 5px 5px 5px 5px;
-  outline: none;
-  padding: 12px 35px;
+.header-wrapper:not(.stuck) .logo img {
+  transition: max-height .5s;
+}
+
+.logo img {
+  display: block;
+  width: auto;
+}
+
+.flex-right {
+  margin-left: auto;
+}
+
+.flex-col {
+  max-height: 100%;
+}
+
+.header-nav {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.nav-right {
+  justify-content: flex-end;
+}
+
+.nav {
+  align-items: center;
   display: inline-block;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
+.nav li:first-child {
+  margin-left: 0 !important;
+}
+
+.header-nav>li {
+  margin: 0 15px;
+}
+
+.header-main .nav>li>a {
+  text-transform: none;
   font-size: 14px;
-  font-weight: 500;
+  color: #333;
+}
+
+.nav>li>a {
+  font-family: "inherit", sans-serif;
+}
+
+.nav>li>a {
+  font-size: .8em;
+}
+
+.nav-uppercase>li>a {
+  font-weight: bolder;
+  letter-spacing: .02em;
   text-transform: uppercase;
 }
 
-.readon.orange-btn.main-home {
-  padding: 10px 20px 10px 20px !important;
-  margin-top: 25px;
+.nav-column>li>a,
+.nav-dropdown>li>a,
+.nav-vertical-fly-out>li>a,
+.nav>li>a {
+  color: hsla(0, 0%, 40%, .85);
+  transition: all .2s;
 }
 
-/* Thiết lập điều kiện để hiển thị menu tùy thuộc vào độ rộng trình duyệt */
-@media screen and (max-width: 768px) {
+a {
+  color: #334862;
+  text-decoration: none;
+}
 
-  /* Đặt độ rộng tối thiểu để hiển thị menu */
-  .burger {
-    display: none;
-  }
+#image_616851210 {
+  width: 100%;
+}
 
-  #burger:checked~#menu {
-    display: block;
+#image_182394615 {
+  width: 100%;
+}
+
+img {
+  display: inline-block;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.container.img {
+  margin-bottom: 20px;
+}
+
+.banner-img {
+  margin-top: 110px;
+}
+
+@media (min-width:550px) {
+  #image_182394615 {
+    width: 100%;
   }
 }
 
-@media (max-width: 991px) {
-  .burger {
-    display: none;
+@media (min-width:550px) {
+  #image_616851210 {
+    width: 100%;
   }
 }
 </style>

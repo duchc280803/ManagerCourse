@@ -5,6 +5,7 @@ import com.example.managercourse.dto.response.ContactResponse;
 import com.example.managercourse.dto.response.MessageResponse;
 import com.example.managercourse.entity.*;
 import com.example.managercourse.enums.StatusContactEnum;
+import com.example.managercourse.exception.NotFoundException;
 import com.example.managercourse.repository.*;
 import com.example.managercourse.service.ContactService;
 import com.example.managercourse.util.MapperUtil;
@@ -17,27 +18,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactServiceImpl implements ContactService {
 
-    @Autowired
-    private ContactRepository contactRepository;
+    private final ContactRepository contactRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final CourseRepository courseRepository;
+
+    private final RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
+
+    private final CourseDetailRepository courseDetailRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CourseDetailRepository courseDetailRepository;
+    public ContactServiceImpl(ContactRepository contactRepository,
+                              PasswordEncoder passwordEncoder,
+                              CourseRepository courseRepository,
+                              RoleRepository roleRepository,
+                              UserRepository userRepository,
+                              CourseDetailRepository courseDetailRepository) {
+        this.contactRepository = contactRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.courseRepository = courseRepository;
+        this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.courseDetailRepository = courseDetailRepository;
+    }
 
     @Override
     public List<ContactResponse> selectContact(Integer pageNumber, Integer pageSize) {
@@ -62,12 +73,17 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public ContactResponse findByContact(Integer id) {
-        return MapperUtil.toDTO(contactRepository.findById(id).get(), ContactResponse.class);
+        Optional<Contact> contactOptional = contactRepository.findById(id);
+
+        Contact contact = contactOptional.orElseThrow(() -> new NotFoundException("Contact not found with id: " + id));
+
+        return MapperUtil.toDTO(contact, ContactResponse.class);
     }
 
     @Override
     public MessageResponse convertStatusContact(Integer id, Integer status, String course) {
-        Contact contact = contactRepository.findById(id).get();
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Contact not found with id: " + id));
         Course courseName = courseRepository.findByCourseName(course);
         if (status == StatusContactEnum.DANG_XU_LY.getValue()) {
             contact.setStatus(StatusContactEnum.DANG_XU_LY.getValue());
@@ -76,9 +92,9 @@ public class ContactServiceImpl implements ContactService {
             contact.setStatus(StatusContactEnum.KHONG_NGHE_MAY.getValue());
             contactRepository.save(contact);
         } else if (status == StatusContactEnum.HOC_VIEN.getValue()) {
-            Integer count = userRepository.countUserByRole_Role("STUDENT");
+            Integer count = userRepository.countUserByRole_RoleName("STUDENT");
             // Tạo người dùng mới cho học viên
-            Role role = roleRepository.findByRole("STUDENT");
+            Role role = roleRepository.findByRoleName("STUDENT");
             User user = new User();
             user.setCodeName("HOC_VIEN_" + count);
             user.setFullName(contact.getFullName());

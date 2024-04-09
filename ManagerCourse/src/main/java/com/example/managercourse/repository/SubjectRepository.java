@@ -21,8 +21,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions , s.classify) " +
             "FROM Subject s " +
             "JOIN s.subjectDetailList sd " +
-            "JOIN sd.course cs WHERE cs.id = :id")
-    Page<SubjectResponse> getListSubjectByCourse(Pageable pageable, @Param("id") Integer id);
+            "JOIN sd.course cs WHERE cs.id = :id AND s.classify = :classify")
+    Page<SubjectResponse> getListSubjectByCourse(Pageable pageable, @Param("id") Integer id, @Param("classify") Integer classify);
 
     @Query("SELECT new com.example.managercourse.dto.response.SubjectResponse(s.id, s.subjectCode, s.subjectName, s.curriculumContent, s.learningMode, s.numberOfSessions , s.classify) " +
             "FROM Subject s " +

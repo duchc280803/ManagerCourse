@@ -28,5 +28,7 @@ public class CourseDetailResponse {
 
     private Integer status;
 
+    private String image;
+
     private List<String> nameTeacher;
 }

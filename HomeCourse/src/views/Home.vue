@@ -36,13 +36,10 @@ const closeModal = (modalId) => {
 };
 </script>
 <template>
-  <div class="img-banner" style="padding-top: 105px">
-    <img src="../assets/maxresdefault.jpg" alt="" style="padding-left: 140px" />
-  </div>
   <br />
   <div class="container">
     <section id="about" class="loaded">
-      <div class="container pt-20 pb-20">
+      <div class="container pt-20 pb-20" style="    margin-top: 90px;">
         <div class="section-title">
           <div class="row">
             <div class="col-lg-6">

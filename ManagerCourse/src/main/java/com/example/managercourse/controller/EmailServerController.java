@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api/v1/email-server/")
 public class EmailServerController {
 
+    private final MailServerServiceImpl mailServerService;
+
     @Autowired
-    private MailServerServiceImpl mailServerService;
+    public EmailServerController(MailServerServiceImpl mailServerService) {
+        this.mailServerService = mailServerService;
+    }
 
     @GetMapping("test-connection/{id}")
     public boolean testConnectEmail(@PathVariable("id") Long id) {
