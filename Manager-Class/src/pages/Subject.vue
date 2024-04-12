@@ -257,22 +257,20 @@ function refreshSubject() {
                 <td>{{ s.subjectName }}</td>
                 <td>
                   <span :style="{
-      'background-color':
-        s.classify == 1
-          ? '#9bcf53'
-          : s.classify == 2
-            ? '#00008B' // Đổi từ '#FFC700' thành '#00008B' vì bạn muốn màu xanh đậm
-            : '#59D5E0',
-      'border-radius': '5px',
-      color: s.classify == 1 ? 'darkgreen' : 'white',
-    }">
+                    'background-color': s.classify == 1 ? '#9bcf53'
+                      : s.classify == 2
+                        ? '#00008B' 
+                        : '#59D5E0',
+                    'border-radius': '5px',
+                    color: s.classify == 1 ? 'darkgreen' : 'white',
+                  }">
                     {{
-      s.classify == 1
-        ? "Môn nền tảng"
-        : s.classify == 2
-          ? "Môn chuyên sâu"
-          : "Môn bổ trợ"
-    }}
+                      s.classify == 1
+                        ? "Môn nền tảng"
+                        : s.classify == 2
+                          ? "Môn chuyên sâu"
+                    : "Môn bổ trợ"
+                    }}
                   </span>
                 </td>
                 <td>{{ s.curriculumContent }}</td>
@@ -349,8 +347,8 @@ function refreshSubject() {
                   <input type="text" class="form-control an-select" placeholder="Tên môn..." v-model="subjectName" />
                 </div>
                 <span style="color: red">{{
-      errorCreateSubject.subjectName
-    }}</span>
+                  errorCreateSubject.subjectName
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -365,8 +363,8 @@ function refreshSubject() {
                     v-model="curriculumContent"></textarea>
                 </div>
                 <span style="color: red">{{
-      errorCreateSubject.curriculumContent
-    }}</span>
+                  errorCreateSubject.curriculumContent
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -384,8 +382,8 @@ function refreshSubject() {
                   </select>
                 </div>
                 <span style="color: red">{{
-      errorCreateSubject.learningMode
-    }}</span>
+                  errorCreateSubject.learningMode
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -405,8 +403,8 @@ function refreshSubject() {
                   </select>
                 </div>
                 <span style="color: red">{{
-      errorCreateSubject.classify
-    }}</span>
+                  errorCreateSubject.classify
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -418,8 +416,8 @@ function refreshSubject() {
               <div class="col-7">
                 <input type="number" class="form-control an-select" v-model="numberOfSessions" placeholder="Số buổi" />
                 <span style="color: red">{{
-      errorCreateSubject.numberOfSessions
-    }}</span>
+                  errorCreateSubject.numberOfSessions
+                  }}</span>
               </div>
             </div>
           </div>
@@ -472,8 +470,8 @@ function refreshSubject() {
                     v-model="subjectUpdate.subjectName" />
                 </div>
                 <span style="color: red">{{
-      errorUpdateSubject.subjectName
-    }}</span>
+                  errorUpdateSubject.subjectName
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -488,8 +486,8 @@ function refreshSubject() {
                     v-model="subjectUpdate.curriculumContent"></textarea>
                 </div>
                 <span style="color: red">{{
-      errorUpdateSubject.curriculumContent
-    }}</span>
+                  errorUpdateSubject.curriculumContent
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -507,8 +505,8 @@ function refreshSubject() {
                   </select>
                 </div>
                 <span style="color: red">{{
-      errorUpdateSubject.learningMode
-    }}</span>
+                  errorUpdateSubject.learningMode
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -527,8 +525,8 @@ function refreshSubject() {
                   </select>
                 </div>
                 <span style="color: red">{{
-      errorUpdateSubject.classify
-    }}</span>
+                  errorUpdateSubject.classify
+                  }}</span>
               </div>
               <div class="pap"></div>
               <div class="col-4 ctrl_label">
@@ -541,8 +539,8 @@ function refreshSubject() {
                 <input type="number" class="form-control an-select" v-model="subjectUpdate.numberOfSessions"
                   placeholder="Số buổi" />
                 <span style="color: red">{{
-      errorUpdateSubject.numberOfSessions
-    }}</span>
+                  errorUpdateSubject.numberOfSessions
+                  }}</span>
               </div>
             </div>
           </div>
@@ -639,5 +637,4 @@ tr {
 .pap {
   padding-top: 20px;
 }
-
 </style>

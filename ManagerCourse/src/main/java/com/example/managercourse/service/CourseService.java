@@ -3,6 +3,7 @@ package com.example.managercourse.service;
 import com.example.managercourse.dto.request.CourseRequest;
 import com.example.managercourse.dto.request.SubjectAddCourseRequest;
 import com.example.managercourse.dto.response.*;
+import com.example.managercourse.entity.Course;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface CourseService {
     List<CourseOfClass> getListCourse(String username);
 
     MessageResponse addSubjectToCourse(SubjectAddCourseRequest subjectAddCourseRequest, Integer id);
+
+    Course getCourseId(Integer id);
 }

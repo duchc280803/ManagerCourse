@@ -2,6 +2,7 @@ import Call from '@/views/Call.vue'
 import Home from '@/views/Home.vue'
 import Contact from '@/views/Contact.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import CourseDetail from '@/views/Course-detail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,12 @@ const router = createRouter({
       path: '/dao-tao',
       name: 'Contact',
       component: Contact
+    }
+    ,
+    {
+      path: '/:id',
+      name: 'CourseDetail',
+      component: CourseDetail
     }
   ]
 })

@@ -197,6 +197,12 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    @Override
+    public Course getCourseId(Integer id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + id));
+    }
+
     private CourseResponse courseResponse(Course course, List<TeacherOfClassResponse> teacherOfClassResponses, int count) {
         CourseResponse courseResponse = new CourseResponse();
         courseResponse.setId(course.getId());

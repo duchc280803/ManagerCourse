@@ -3,6 +3,7 @@ package com.example.managercourse.controller;
 import com.example.managercourse.dto.request.CourseRequest;
 import com.example.managercourse.dto.request.SubjectAddCourseRequest;
 import com.example.managercourse.dto.response.*;
+import com.example.managercourse.entity.Course;
 import com.example.managercourse.service.impl.CourseServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,13 @@ public class CourseController {
             @Valid @RequestBody SubjectAddCourseRequest subjectAddCourseRequest
     ) {
         return new ResponseEntity<>(courseService.addSubjectToCourse(subjectAddCourseRequest, id), HttpStatus.CREATED);
+    }
+
+    @GetMapping("select-fill-course")
+    public ResponseEntity<Course> findById(
+            @RequestParam(name = "id") Integer id
+    ) {
+        return new ResponseEntity<>(courseService.getCourseId(id), HttpStatus.OK);
     }
 
 }

@@ -56,7 +56,6 @@ const getListSubjectName = async (classify) => {
     listSubject.value = response.data;
   } catch (error) {
     console.error('Error fetching subjects:', error);
-    // Handle error
   }
 };
 

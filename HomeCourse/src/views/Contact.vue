@@ -1,5 +1,72 @@
 <script setup>
 import CsInput from '@/components/CsInput.vue';
+import { ref } from "vue";
+import axios from "axios";
+/**
+ * Get list course
+ */
+const listCourse = ref([]);
+let pageNumber = 0;
+let pageSize = 9;
+const getListCourse = async () => {
+    axios
+        .get(
+            `http://localhost:8080/api/v1/course/show?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        )
+        .then(function (response) {
+            if (response.data.length > 0) {
+                listCourse.value = response.data;
+            } else {
+                // Nếu không có dữ liệu, bạn có thể không làm gì hoặc hiển thị thông báo
+                console.log("Không có dữ liệu");
+            }
+        });
+};
+getListCourse();
+const nextPage = function () {
+    pageNumber++;
+    getListCourse();
+};
+
+const previousPage = function () {
+    if (pageNumber > 0) {
+        pageNumber--;
+        getListCourse();
+    }
+};
+
+const fullName = ref("");
+const phoneNumber = ref("");
+const email = ref("");
+
+/**
+ * Create a new student
+ */
+const resetForm = () => {
+    fullName.value = "";
+    phoneNumber.value = "";
+    email.value = "";
+};
+const createStudent = async () => {
+    const newStudent = {
+        fullName: fullName.value,
+        phoneNumber: phoneNumber.value,
+        email: email.value,
+    };
+    await axios.post(`http://localhost:8080/api/v1/student/create-for-user`, newStudent);
+    resetForm(); // Reset form data and error messages after successful create operation
+    closeModal("#exampleModal"); // Close modal
+};
+
+const closeModal = (modalId) => {
+    const modal = document.querySelector(modalId);
+    const backdrop = document.querySelector(".modal-backdrop");
+    if (modal && backdrop) {
+        modal.classList.remove("show");
+        modal.style.display = "none";
+        backdrop.remove();
+    }
+};
 </script>
 <template>
     <div class="container">
@@ -81,32 +148,28 @@ import CsInput from '@/components/CsInput.vue';
                                 </ul>
                             </div>
                         </div>
-
-                        <div class="bottom-filter text-right"><button type="reset" class="btn">Xoá bộ lọc</button></div>
                     </div>
                 </div>
             </div>
             <div class="col small-12 large-9 pd-0">
                 <div class="col-inner">
                     <div class="row align-equal list-ajax-items">
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4" v-for="c in listCourse">
                             <div class="card card item-post item-course box-shadow-2 rounded-small overflow-hidden">
                                 <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/java-web-developer-a-to-z/">
-                                        <img decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/03/Javawebaz-360x190.jpg"
+                                    <RouterLink :to="`/${c.id}`">
+                                        <img decoding="async" width="360" height="190" :src="c.image"
                                             class="attachment-small-rectangle size-small-rectangle wp-post-image"
                                             alt="">
-                                    </a>
+                                    </RouterLink>
                                 </div>
                                 <div class="item-info pa-half">
                                     <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/java-web-developer-a-to-z/">Java
-                                                Web Developer A to Z</a></h3>
-
-                                        <div class="text-second main-price">15.900.000 VNĐ</div>
-
+                                        <h3 class="item-title my-0">
+                                            {{ c.courseName }}
+                                        </h3>
+                                        <div class="text-second main-price">{{ c.coursePrice.toLocaleString('vi-VN') }}
+                                            VNĐ</div>
                                         <div class="item-meta">
                                             <div class="item-meta-line">
                                                 <div>
@@ -115,19 +178,7 @@ import CsInput from '@/components/CsInput.vue';
                                                         <path
                                                             d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
                                                             fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
+                                                    </svg> Dự kiến học: {{ c.scheduled }}
                                                 </div>
                                                 <span></span>
                                             </div>
@@ -139,559 +190,18 @@ import CsInput from '@/components/CsInput.vue';
                                                             d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
                                                             fill="#6FBD44"></path>
                                                     </svg>
-                                                    Hình thức:
+                                                    Trạng thái:
                                                 </div>
-                                                <span>Offline</span>
+                                                <span
+                                                    :style="{ 'background-color': c.status == 1 ? '#9bcf53' : 'red', 'border-radius': '5px', color: c.status == 1 ? 'darkgreen' : 'white', }">{{
+                                                        c.status == 1 ? "Đang hoạt động" : "Ngừng hoạt động" }}</span>
+                                            </div>
+                                            <div class="item-meta-line">
+                                                <div class="btn-part" data-v-2dc54a20=""><button target="_blank"
+                                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                        data-v-2dc54a20=""> Đăng ký ngay </button></div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/java-web-developer-a-to-z/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/data-analytics/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2023/09/anh-02-1-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/data-analytics/">Data
-                                                Analytics</a></h3>
-
-                                        <div class="text-second main-price">7.900.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span>27/03/2024</span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span>Cơ bản</span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span>Online</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/data-analytics/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/agile-in-practice-crash-course/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-01-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/agile-in-practice-crash-course/">Agile
-                                                in Practice Crash Course</a></h3>
-
-                                        <div class="text-second main-price">3.900.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span>30/12/2023</span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/agile-in-practice-crash-course/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/programming-with-python/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-18-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/programming-with-python/">Python
-                                                Essentials</a></h3>
-
-                                        <div class="text-second main-price">5.900.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span></span>
-                                            </div>
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/programming-with-python/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/easy-coding/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-19-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/easy-coding/">Easy Coding (for
-                                                kids)</a></h3>
-
-                                        <div class="text-second main-price">3.000.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span></span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/easy-coding/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/full-stack-net-web-for-beginner/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-23-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/full-stack-net-web-for-beginner/">Full-Stack
-                                                .Net Web for Beginner</a></h3>
-
-                                        <div class="text-second main-price">41.800.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span></span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/full-stack-net-web-for-beginner/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/luyen-thi-chung-chi-pmi-acp/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-21-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/luyen-thi-chung-chi-pmi-acp/">Luyện
-                                                thi chứng chỉ: PMI-ACP</a></h3>
-
-                                        <div class="text-second main-price">8.000.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span></span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/luyen-thi-chung-chi-pmi-acp/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/devops-foundation/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-22-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/devops-foundation/">DevOps
-                                                Foundation</a></h3>
-
-                                        <div class="text-second main-price">11.900.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span>01/05/2024</span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span>Cơ bản </span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span>Online</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/devops-foundation/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
-                            <div class="card item-post item-course box-shadow-2 rounded-small overflow-hidden">
-                                <div class="item-img relative">
-                                    <a href="https://fsoft-academy.edu.vn/course/full-stack-java-web-for-beginner/">
-                                        <img loading="lazy" decoding="async" width="360" height="190"
-                                            src="https://fsoft-academy.edu.vn/wp-content/uploads/2024/01/anh-23-360x190.jpg"
-                                            class="attachment-small-rectangle size-small-rectangle wp-post-image"
-                                            alt="">
-                                    </a>
-                                </div>
-                                <div class="item-info pa-half">
-                                    <div class="item-detail full-width">
-                                        <h3 class="item-title my-0"><a
-                                                href="https://fsoft-academy.edu.vn/course/full-stack-java-web-for-beginner/">Full-Stack
-                                                Java Web for Beginner</a></h3>
-
-                                        <div class="text-second main-price">41.800.000 VNĐ</div>
-
-                                        <div class="item-meta">
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M4.66629 9.71667C4.82204 9.71667 4.9527 9.66399 5.05825 9.55863C5.16381 9.45327 5.21659 9.32271 5.21659 9.16697C5.21659 9.01121 5.16391 8.88056 5.05855 8.775C4.95319 8.66944 4.82263 8.61667 4.66689 8.61667C4.51113 8.61667 4.38047 8.66934 4.27492 8.7747C4.16936 8.88007 4.11659 9.01062 4.11659 9.16637C4.11659 9.32212 4.16926 9.45278 4.27462 9.55833C4.37999 9.66389 4.51054 9.71667 4.66629 9.71667ZM4.66629 7.05C4.82204 7.05 4.9527 6.99732 5.05825 6.89197C5.16381 6.7866 5.21659 6.65604 5.21659 6.5003C5.21659 6.34454 5.16391 6.21389 5.05855 6.10833C4.95319 6.00278 4.82263 5.95 4.66689 5.95C4.51113 5.95 4.38047 6.00268 4.27492 6.10803C4.16936 6.2134 4.11659 6.34396 4.11659 6.4997C4.11659 6.65546 4.16926 6.78611 4.27462 6.89167C4.37999 6.99722 4.51054 7.05 4.66629 7.05ZM5.99992 9.66667H11.9999V8.66667H5.99992V9.66667ZM5.99992 7H11.9999V6H5.99992V7ZM5.49992 14.5V13.1667H2.33325C2.06659 13.1667 1.83325 13.0667 1.63325 12.8667C1.43325 12.6667 1.33325 12.4333 1.33325 12.1667V3.5C1.33325 3.23333 1.43325 3 1.63325 2.8C1.83325 2.6 2.06659 2.5 2.33325 2.5H13.6666C13.9333 2.5 14.1666 2.6 14.3666 2.8C14.5666 3 14.6666 3.23333 14.6666 3.5V12.1667C14.6666 12.4333 14.5666 12.6667 14.3666 12.8667C14.1666 13.0667 13.9333 13.1667 13.6666 13.1667H10.4999V14.5H5.49992ZM2.33325 12.1667H13.6666V3.5H2.33325V12.1667Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg> Khai giảng:
-                                                </div>
-                                                <span>16/04/2024</span>
-                                            </div>
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M10.4499 11.7168L11.1999 10.9668L8.54992 8.30016V4.95016H7.54992V8.70016L10.4499 11.7168ZM7.99992 15.1668C7.08881 15.1668 6.2277 14.9918 5.41658 14.6418C4.60547 14.2918 3.89714 13.8141 3.29159 13.2085C2.68603 12.6029 2.20825 11.8946 1.85825 11.0835C1.50825 10.2724 1.33325 9.41127 1.33325 8.50016C1.33325 7.58905 1.50825 6.72794 1.85825 5.91683C2.20825 5.10572 2.68603 4.39738 3.29159 3.79183C3.89714 3.18627 4.60547 2.7085 5.41658 2.3585C6.2277 2.0085 7.08881 1.8335 7.99992 1.8335C8.91103 1.8335 9.77214 2.0085 10.5833 2.3585C11.3944 2.7085 12.1027 3.18627 12.7083 3.79183C13.3138 4.39738 13.7916 5.10572 14.1416 5.91683C14.4916 6.72794 14.6666 7.58905 14.6666 8.50016C14.6666 9.41127 14.4916 10.2724 14.1416 11.0835C13.7916 11.8946 13.3138 12.6029 12.7083 13.2085C12.1027 13.8141 11.3944 14.2918 10.5833 14.6418C9.77214 14.9918 8.91103 15.1668 7.99992 15.1668ZM7.99992 14.1668C9.55547 14.1668 10.8888 13.6113 11.9999 12.5002C13.111 11.3891 13.6666 10.0557 13.6666 8.50016C13.6666 6.94461 13.111 5.61127 11.9999 4.50016C10.8888 3.38905 9.55547 2.8335 7.99992 2.8335C6.44436 2.8335 5.11103 3.38905 3.99992 4.50016C2.88881 5.61127 2.33325 6.94461 2.33325 8.50016C2.33325 10.0557 2.88881 11.3891 3.99992 12.5002C5.11103 13.6113 6.44436 14.1668 7.99992 14.1668Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Trình độ:
-                                                </div>
-                                                <span>Cơ bản</span>
-                                            </div>
-
-
-                                            <div class="item-meta-line">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17"
-                                                        viewBox="0 0 16 17" fill="none">
-                                                        <path
-                                                            d="M2 8V2.5H7.5V8H2ZM2 14.5V9H7.5V14.5H2ZM8.5 8V2.5H14V8H8.5ZM8.5 14.5V9H14V14.5H8.5ZM3 7H6.5V3.5H3V7ZM9.5 7H13V3.5H9.5V7ZM9.5 13.5H13V10H9.5V13.5ZM3 13.5H6.5V10H3V13.5Z"
-                                                            fill="#6FBD44"></path>
-                                                    </svg>
-                                                    Hình thức:
-                                                </div>
-                                                <span>Offline</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="price-info flex">
-                                    <div class="flex justify-between items-center full-width">
-
-                                        <a href="https://fsoft-academy.edu.vn/course/full-stack-java-web-for-beginner/"
-                                            class="btn bg-main text-white btn-course-detail">Xem chi tiết</a>
                                     </div>
                                 </div>
                             </div>
@@ -699,9 +209,45 @@ import CsInput from '@/components/CsInput.vue';
                     </div>
                 </div>
             </div>
+            <div class="pagination" style="padding-bottom: 15px;">
+                <a class="page-btn" @click="previousPage()">«</a>
+                <!-- Previous -->
+
+                <a class="page-btn">{{ pageNumber + 1 }}</a>
+                <!-- Page numbers -->
+
+                <a class="page-btn" @click="nextPage()">»</a>
+                <!-- Next -->
+            </div>
         </div>
     </div>
-
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đăng ký khóa học</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" placeholder="Họ và tên ..." v-model="fullName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" placeholder="Số điện thoại ..." v-model="phoneNumber" />
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="form-label">Email</label>
+                        <input type="text" class="form-control" placeholder="Email ..." v-model="email" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="createStudent()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <style scoped>
 .container {
@@ -937,8 +483,39 @@ img {
     align-items: center;
 }
 
-.col-lg-4.col-md-6 {
-    padding-bottom: 15px
+.pagination {
+    width: 100%;
+    padding: 0 1rem;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.page-btn {
+    color: #000000;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0.25rem;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-btn:is(a) {
+    text-decoration: none;
+    background-color: #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: color 128ms ease-out, background-color 128ms ease-out;
+}
+
+.page-num {
+    display: none;
+}
+
+.page-step {
+    display: none;
 }
 
 @media screen and (min-width: 992px) {
@@ -967,6 +544,7 @@ img {
         display: flex;
         flex-direction: column;
     }
+
     .col-3 {
         width: 100%;
     }
@@ -978,12 +556,14 @@ img {
         max-width: 50%;
     }
 }
+
 @media (max-width: 768px) {
     .col-md-6 {
         flex-basis: 100%;
         max-width: 100%;
     }
 }
+
 @media (max-width: 768px) {
     img {
         width: 100%;
